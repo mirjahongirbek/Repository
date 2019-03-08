@@ -1,5 +1,4 @@
-﻿using AspectCore.Configuration;
-using AspectCore.Extensions.Autofac;
+﻿using AspectCore.Extensions.Autofac;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Examples.Db;
@@ -7,7 +6,6 @@ using LoggingRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,9 +44,9 @@ namespace Examples
 
             var log = new LoggerConfiguration().WriteTo.Seq("http://localhost:5341").WriteTo.Console()
             .CreateLogger();
-                //.WriteTo.Stackify()
-                //.CreateLogger();
-
+            //.WriteTo.Stackify()
+            //.CreateLogger();
+            services.AddCors();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var containerBuilder = new ContainerBuilder();
@@ -86,6 +84,11 @@ namespace Examples
            // app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseCors(builder => builder
+                .WithOrigins("*")
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseMvc(routes =>
             {

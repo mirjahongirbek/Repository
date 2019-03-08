@@ -8,7 +8,7 @@ using System;
 
 namespace Examples.Controllers
 {
-    public class HomeController: GenericsController<string>
+    public class HomeController: GenericController<string>
     {
         readonly IDataService _data;
         public HomeController(IDataService data
