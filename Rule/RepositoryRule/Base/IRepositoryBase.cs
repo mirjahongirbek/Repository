@@ -10,7 +10,7 @@ namespace RepositoryRule.Base
     // this Repositoriy core you can update Add new Features and more
     // in  Realise this interface you can include cache but not use Find #region
     public interface IRepositoryBase<T, TKey>
-        where T : class, IEntity<TKey>
+        where T : IEntity<TKey>
     {
         //Get we can search Cache too
         #region Get
@@ -117,7 +117,7 @@ namespace RepositoryRule.Base
         //Task UpdateAsync(Expression<Func<T, T>> selector,  [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null);
 
         #endregion
-       // Delete Entitys from database with cache
+        // Delete Entitys from database with cache
         #region Delate
         /// <summary>
         /// Delete by Id
@@ -157,6 +157,11 @@ namespace RepositoryRule.Base
         /// </summary>
         /// <returns></returns>
         IEnumerable<T> FindAll();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindAllAsync();
         /// <summary>
         /// Find section Gived function
         /// </summary>
@@ -333,6 +338,7 @@ namespace RepositoryRule.Base
         /// <returns></returns>
         Task<IEnumerable<T>> FindReverseAsync(string key, string value, int offset, int limit);
         #endregion
+        Type GetGenericType();
     }
     public interface GroupGase
     {

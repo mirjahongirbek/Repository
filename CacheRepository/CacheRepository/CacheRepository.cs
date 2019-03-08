@@ -12,7 +12,7 @@ namespace CacheRepository
         public static Dictionary<string, TimeSpan> Entitys { get; set; }
     }
 
-    public class CacheRepository<T> : IChacheRepository<T>
+    public class CacheRepository<T> : ICacheRepository<T>
         where T : class
     {
         string name;
@@ -93,7 +93,7 @@ namespace CacheRepository
             throw new NotImplementedException();
         }
         #endregion
-
+        
         #region Find
         public T Find(string id)
         {
@@ -106,7 +106,8 @@ namespace CacheRepository
         //change
         public T Find(Expression<Func<T, bool>> seletor)
         {
-            return null;
+           var s= seletor.Compile();
+            
         }
 
         public async Task<T> FindAsync(string id)

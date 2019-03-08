@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MongoRepository;
 using MongoRepository.Context;
+using RepositoryRule.Base;
 using RepositoryRule.LoggerRepository;
 using Serilog;
 using ServiceList;
@@ -52,11 +54,15 @@ namespace Examples
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
             containerBuilder.RegisterType<DataService>().As<IDataService>();
+            containerBuilder.RegisterGeneric(typeof(MongoRepository<>))
+                .As(typeof(IRepositoryBase<,>));
             containerBuilder.RegisterType<SeilogLogger>().As<ILoggerRepository>();
             containerBuilder.RegisterType<MongoContext>().As<IMongoContext>();
-            containerBuilder.RegisterDynamicProxy(mbox => {
-                mbox.Interceptors.AddTyped<MethodExecuteLoggerInterceptor>(args: new object[] {log});
-            });
+
+            //containerBuilder.RegisterDynamicProxy(mbox => {
+            //    mbox.Interceptors.AddTyped<MethodExecuteLoggerInterceptor>(args: new object[] {log});
+            //});
+
             this.ApplicationContainer = containerBuilder.Build();
             return new AutofacServiceProvider(this.ApplicationContainer);
             // return services.BuildAspectCoreServiceProvider();

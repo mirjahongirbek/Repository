@@ -737,6 +737,16 @@ namespace SQLRepository
         {
             throw new NotImplementedException();
         }
+
+        public Task<IEnumerable<T>> FindAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Type GetGenericType()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
     }

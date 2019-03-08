@@ -10,7 +10,7 @@ namespace ServiceList
     {
 
     }
-   public interface IEntityDataService:IRepositoryBase<EntityData, int>
+    public interface IEntityDataService:IRepositoryBase<EntityData, int>
     {
 
     }

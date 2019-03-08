@@ -27,7 +27,7 @@ namespace MongoRepository
         IMongoCollection<T> _db;
         protected IMongoDatabase _database;
         ILoggerRepository _logger;
-        IChacheRepository<T> _cache;
+        ICacheRepository<T> _cache;
         string name;
         public MongoRepository(IMongoContext database)
         {
@@ -35,7 +35,7 @@ namespace MongoRepository
             name=typeof(T).Name;
             _db = _database.GetCollection<T>(name);
         }
-        public MongoRepository(IMongoContext context, IChacheRepository<T> cache):this(context)
+        public MongoRepository(IMongoContext context, ICacheRepository<T> cache):this(context)
         {
             _cache = cache;
         }
@@ -52,6 +52,10 @@ namespace MongoRepository
 
         public void Add(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            if (string.IsNullOrEmpty(model.Id))
+            {
+                model.Id = ObjectId.GenerateNewId().ToString();
+            }
             _cache?.Add(model.Id, model);
             _db.InsertOne(model);
         }
@@ -589,6 +593,16 @@ namespace MongoRepository
         public Task<IEnumerable<T>> FindReverseAsync(int offset, int limit)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<T>> FindAllAsync()
+        {
+           return  FindAll();
+        }
+
+        public Type GetGenericType()
+        {
+            return typeof(T);
         }
         #endregion
     }

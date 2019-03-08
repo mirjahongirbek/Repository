@@ -33,7 +33,7 @@ namespace EntityExample
             // добавляем контекст MobileContext в качестве сервиса в приложение
             services.AddEntityFrameworkSqlServer().AddDbContext<EntityDatabase>(options =>
                 options.UseSqlServer(connection));
-            services.AddEntityFrameworkSqlServer().AddDbContextPool
+            
             services.AddScoped<IDataContext>(provider => provider.GetService<EntityDatabase>());
             services.AddScoped<IEntityDataService, EntityDataService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

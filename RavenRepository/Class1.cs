@@ -89,7 +89,7 @@ namespace RavenRepository
         #region Count
         public long Count([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-           return _session.Query<T>().CountLazily().Value
+            return _session.Query<T>().CountLazily().Value;
         }
 
         public long Count(Expression<Func<T, bool>> expression, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
@@ -99,7 +99,8 @@ namespace RavenRepository
 
         public long Count(string field, string value, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            _session.Advanced.DocumentQuery<T>().Count(m=>m.GetType().GetProperty(field)==)
+            //_session.Advanced.DocumentQuery<T>().Count(m=>m.GetType().GetProperty(field)== value)
+            return 0;
         }
         #endregion
         #region Delete
@@ -175,6 +176,11 @@ namespace RavenRepository
             throw new NotImplementedException();
         }
 
+        public Task<IEnumerable<T>> FindAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> keySelector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             throw new NotImplementedException();
@@ -223,7 +229,7 @@ namespace RavenRepository
         #region Get
         public T Get(TKey id, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            
+            return null;
         }
 
         public Task<T> GetAsync(TKey id, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
@@ -243,10 +249,15 @@ namespace RavenRepository
         {
             return GetFirst(expression);
         }
+
+        public Type GetGenericType()
+        {
+            throw new NotImplementedException();
+        }
         #region 
         public void Update(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            _session.Advanced.update
+            
         }
 
         public Task UpdateAsync(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
@@ -263,5 +274,6 @@ namespace RavenRepository
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

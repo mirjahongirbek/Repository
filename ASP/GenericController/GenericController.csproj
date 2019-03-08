@@ -5,7 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Rule\RepositoryRule\RepositoryRule.csproj" />
+    <PackageReference Include="Autofac" Version="4.9.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\EntityRepository\EntityRepository.csproj" />
+    <ProjectReference Include="..\..\Entity\Entity.csproj" />
   </ItemGroup>
 
   <ItemGroup>

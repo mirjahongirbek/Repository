@@ -1,24 +1,24 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Examples.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using ServiceList;
 using MongoDB.Bson;
-
+using System.Collections.Generic;
+using GenericControllers;
 using Entity;
-
+using System;
 
 namespace Examples.Controllers
 {
-    public class HomeController:GenericControllers.GenericController<Data, string> //:// GenericController<Data, string>
+    public class HomeController: GenericsController<string>
     {
-        IDataService _data;
-        public HomeController(IDataService data):base(data)
+        readonly IDataService _data;
+        public HomeController(IDataService data
+           )
+            : base(new List<Type>() {typeof(Data)},new List<object>() { data})
         {
-            _data = data;
         }
         public IActionResult Index()
         {
-            _data.Add(new Entity.Data() { Id = ObjectId.GenerateNewId().ToString(), Name = "sd" });
+           // _data.Add(new Entity.Data() { Id = ObjectId.GenerateNewId().ToString(), Name = "sd" });
             return Ok();
         }
 

@@ -15,14 +15,14 @@ namespace CockroachRepository
     {
         QueryFactory _db;
         string name;
-        IChacheRepository<T> _cache;
+        ICacheRepository<T> _cache;
         public CockroachRepository(ICockRoachContext cock)
         {
 
             _db=cock.Db;
             name = typeof(T).Name;
         }
-        public CockroachRepository(ICockRoachContext cock, IChacheRepository<T> cache) : this(cock)
+        public CockroachRepository(ICockRoachContext cock, ICacheRepository<T> cache) : this(cock)
         {
             _cache =cache;
         }
@@ -142,6 +142,11 @@ namespace CockroachRepository
             throw new NotImplementedException();
         }
 
+        public Task<IEnumerable<T>> FindAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> keySelector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             throw new NotImplementedException();
@@ -204,6 +209,11 @@ namespace CockroachRepository
         }
 
         public Task<T> GetFirstAsync(Expression<Func<T, bool>> expression, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Type GetGenericType()
         {
             throw new NotImplementedException();
         }
