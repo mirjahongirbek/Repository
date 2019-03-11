@@ -4,30 +4,46 @@ using System.Text;
 
 namespace RepositoryRule.Attributes
 {
-    public class EntityDescriptionAttribute : System.Attribute
+    public class EntityDescriptionAttribute : Attribute
     {
+        #region Props
         public string Name { get; set; }
         public string Description { get; set; }
-        public EntityDescriptionAttribute(string name)
+        public string Label { get; set; }
+        public FontType FontType { get; set; }
+        public bool ShowAdd { get; set; }
+        public bool Show { get; set; }
+        #endregion 
+        #region Default Constructors
+        public EntityDescriptionAttribute(string name, bool hideAdd= true, bool hideshow=true)
         {
             Name = name;
+            ShowAdd = hideAdd;
+            Show = hideshow;
         }
-        public EntityDescriptionAttribute(string name, string description)
+        public EntityDescriptionAttribute(string DefaultLabel,FontType font, bool hideAdd = true, bool hideshow = true)
+        {
+            FontType = font;
+            DefaultLabel = Label;
+            this.ShowAdd = hideAdd;
+            this.Show = hideshow;
+        }
+        public EntityDescriptionAttribute(string DefaultLabel, FontType font, string OtherTable, bool hideAdd = true, bool hideshow = true)
+        {
+            FontType = font;
+            Label = DefaultLabel;
+            Name = OtherTable;
+            this.ShowAdd = hideAdd;
+            this.Show = hideshow;
+        }
+        public EntityDescriptionAttribute(string name, string description, bool hideAdd = true, bool hideshow = true)
         {
             Name = name;
             Description = description;
+            this.ShowAdd = hideAdd;
+            this.Show = hideshow;
         }
+        #endregion
     }
-    public class NoVisible : System.Attribute
-    {
-        public bool IsVisble { get; set; }
-        public NoVisible()
-        {
-            IsVisble = false;
-        }
-        public NoVisible(bool isVisible)
-        {
-            IsVisble = isVisible;
-        }
-    }
+
 }

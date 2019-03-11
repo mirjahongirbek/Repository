@@ -254,6 +254,7 @@ namespace RavenRepository
         {
             throw new NotImplementedException();
         }
+        #endregion
         #region 
         public void Update(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {

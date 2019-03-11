@@ -52,6 +52,7 @@ namespace Examples
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
             containerBuilder.RegisterType<DataService>().As<IDataService>();
+            containerBuilder.RegisterType<SelectDataService>().As<ISelectDataService>();
             containerBuilder.RegisterGeneric(typeof(MongoRepository<>))
                 .As(typeof(IRepositoryBase<,>));
             containerBuilder.RegisterType<SeilogLogger>().As<ILoggerRepository>();

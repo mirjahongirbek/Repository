@@ -209,6 +209,39 @@ namespace RepositoryRule.Base
         /// <param name="caller"></param>
         /// <returns></returns>
         IEnumerable<T> FindReverse(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        IEnumerable<T> FindReverse(int offset, int limit);
+        /// <summary>
+        /// Find Reverse 
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindReverseAsync(int offset, int limit);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        IEnumerable<T> FindReverse(string key, string value, int offset, int limit);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindReverseAsync(string key, string value, int offset, int limit);
+
         #endregion
         #region FindAsync
         /// <summary>
@@ -305,39 +338,7 @@ namespace RepositoryRule.Base
         #endregion
         // it is new Functionch
         #region New
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        IEnumerable<T> FindReverse(int offset, int limit);
-        /// <summary>
-        /// Find Reverse 
-        /// </summary>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindReverseAsync(int offset, int limit);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        IEnumerable<T> FindReverse(string key, string value, int offset, int limit);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindReverseAsync(string key, string value, int offset, int limit);
-        #endregion
+            #endregion
         Type GetGenericType();
     }
     public interface GroupGase

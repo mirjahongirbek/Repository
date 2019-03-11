@@ -6,10 +6,5 @@
         public dynamic error { get; set; }
         public int status { get; set; }
     }
-    public class SuccesResponse
-    {
 
-       
-    }
-    
 }
