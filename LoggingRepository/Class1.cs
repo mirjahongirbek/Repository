@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
 using Newtonsoft.Json;
-using RepositoryRule.LoggerRepository;
 using Serilog.Core;
 
 namespace LoggingRepository

@@ -18,7 +18,7 @@ namespace RepositoryRule.Attributes
         String,
         EditDelete,
         DateTime,
-        
+        Button,
         Edit,
         Delete,
         Value,

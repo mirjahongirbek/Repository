@@ -8,11 +8,14 @@ namespace RepositoryRule.Attributes
     {
         #region Props
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string ForeignTable { get; set; }
         public string Label { get; set; }
         public FontType FontType { get; set; }
         public bool ShowAdd { get; set; }
         public bool Show { get; set; }
+        public bool GetAllForeign { get; set; }
+        public short LangId { get; set; }
+        public FontType[] Types { get; set; }
         #endregion 
         #region Default Constructors
         public EntityDescriptionAttribute(string name, bool hideAdd= true, bool hideshow=true)
@@ -21,28 +24,28 @@ namespace RepositoryRule.Attributes
             ShowAdd = hideAdd;
             Show = hideshow;
         }
-        public EntityDescriptionAttribute(string DefaultLabel,FontType font, bool hideAdd = true, bool hideshow = true)
-        {
-            FontType = font;
-            DefaultLabel = Label;
-            this.ShowAdd = hideAdd;
-            this.Show = hideshow;
-        }
-        public EntityDescriptionAttribute(string DefaultLabel, FontType font, string OtherTable, bool hideAdd = true, bool hideshow = true)
+       public EntityDescriptionAttribute(string DefaultLabel, 
+            FontType font,
+            FontType[] types= null,
+            string foreignTable=null, 
+            string name=null,
+            bool getAllForeign= false, 
+            bool hideAdd = true,
+            bool hideshow = true,
+            short langId=0
+            )
         {
             FontType = font;
             Label = DefaultLabel;
-            Name = OtherTable;
-            this.ShowAdd = hideAdd;
-            this.Show = hideshow;
-        }
-        public EntityDescriptionAttribute(string name, string description, bool hideAdd = true, bool hideshow = true)
-        {
+            ForeignTable= foreignTable;
+            LangId = langId;
             Name = name;
-            Description = description;
-            this.ShowAdd = hideAdd;
-            this.Show = hideshow;
+            Types = types;
+            GetAllForeign = getAllForeign;
+            ShowAdd = hideAdd;
+            Show = hideshow;
         }
+        
         #endregion
     }
 
