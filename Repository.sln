@@ -41,11 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RavenRepository", "RavenRep
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{27050B2D-F6F7-4CB1-9E54-C86D486DD3A8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RepositoryFront", "RepositoryFront", "{F527DFF5-19D0-4107-B051-99DFA44E920A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{F616BF70-3FA8-474F-BB01-7759D5E37465}"
-EndProject
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "VueComponents", "VueComponents\VueComponents.njsproj", "{B48F6406-18DC-4096-AF78-6FEBA2C80F51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,10 +113,6 @@ Global
 		{27050B2D-F6F7-4CB1-9E54-C86D486DD3A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27050B2D-F6F7-4CB1-9E54-C86D486DD3A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27050B2D-F6F7-4CB1-9E54-C86D486DD3A8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B48F6406-18DC-4096-AF78-6FEBA2C80F51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B48F6406-18DC-4096-AF78-6FEBA2C80F51}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B48F6406-18DC-4096-AF78-6FEBA2C80F51}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B48F6406-18DC-4096-AF78-6FEBA2C80F51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,7 +131,6 @@ Global
 		{B9A0925B-1656-473E-8EEA-01F1B6939F55} = {BE5D45F4-6A1B-45C1-820C-0ECA338F14BF}
 		{09E16AAF-69C6-4A73-8A43-63AA816EA91B} = {F616BF70-3FA8-474F-BB01-7759D5E37465}
 		{27050B2D-F6F7-4CB1-9E54-C86D486DD3A8} = {BE5D45F4-6A1B-45C1-820C-0ECA338F14BF}
-		{B48F6406-18DC-4096-AF78-6FEBA2C80F51} = {F527DFF5-19D0-4107-B051-99DFA44E920A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5856CBE3-69F0-47C1-B709-0FA9D1B8771B}
