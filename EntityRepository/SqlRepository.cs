@@ -60,7 +60,7 @@ namespace EntityRepository
             _cache?.Add(model.Id.ToString(), model);
             await _dbSet.AddAsync(model);
             await _db.SaveChangesAsync();
-            await _rep?.AddAsync(model);
+             _rep?.AddAsync(model);
         }
         public void AddRange(List<T> models, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
@@ -131,7 +131,7 @@ namespace EntityRepository
             _cache?.Update(model.Id.ToString(), model);
             _dbSet.Update(model);
             await _db.SaveChangesAsync();
-            await _rep?.UpdateAsync(model);
+             _rep?.UpdateAsync(model);
         }
         public void UpdateMany(List<T> models, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
@@ -145,7 +145,7 @@ namespace EntityRepository
             _cache?.Update(models);
             _dbSet.UpdateRange(models);
             await _db.SaveChangesAsync();
-            await _rep?.UpdateManyAsync(models);
+             _rep?.UpdateManyAsync(models);
             return;
         }
         public void Update(Expression<Func<T, T>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
@@ -180,14 +180,14 @@ namespace EntityRepository
             _dbSet.Remove(model);
             _cache?.Delete(model.Id.ToString());
             await _db.SaveChangesAsync();
-            await _rep?.DelateAsync(model);
+             _rep?.DelateAsync(model);
         }
         public async Task DeleteManyAsync(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             _cache?.DeleteMany(selector);
             await _dbSet.Where(selector).DeleteAsync();
             _db.SaveChanges();
-            await _rep?.DeleteManyAsync(selector);
+             _rep?.DeleteManyAsync(selector);
         }
         public void DeleteMany(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
@@ -341,6 +341,7 @@ namespace EntityRepository
         {
             return FindAll();
         }
+        
     }
 
 }

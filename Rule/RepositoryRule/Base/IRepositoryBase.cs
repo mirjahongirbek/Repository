@@ -341,8 +341,4 @@ namespace RepositoryRule.Base
             #endregion
         Type GetGenericType();
     }
-    public interface GroupGase
-    {
-
-    }
 }
