@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceList;
-using MongoDB.Bson;
 using System.Collections.Generic;
 using GenericControllers;
 using Entity;
@@ -8,13 +7,15 @@ using System;
 
 namespace Examples.Controllers
 {
-    public class HomeController: GenericsController<string>
+    public class HomeController: GenericController<string>
     {
         readonly IDataService _data;
-        public HomeController(IDataService data
+        public HomeController(IDataService data,
+            ISelectDataService selectdata
            )
-            : base(new List<Type>() {typeof(Data)},new List<object>() { data})
+            : base(new List<Type>() {typeof(Data),typeof(SelectData)},new List<object>() { data, selectdata })
         {
+
         }
         public IActionResult Index()
         {

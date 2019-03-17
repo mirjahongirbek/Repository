@@ -107,7 +107,7 @@ namespace CacheRepository
         public T Find(Expression<Func<T, bool>> seletor)
         {
            var s= seletor.Compile();
-            
+            return null;
         }
 
         public async Task<T> FindAsync(string id)

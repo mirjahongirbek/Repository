@@ -24,7 +24,7 @@ namespace SQLRepository
     {
         #region Head
         ILoggerRepository _logger;
-        IChacheRepository<T> _cache;
+        ICacheRepository<T> _cache;
         protected DbContext _db;
         protected DbSet<T> _dbSet;
         private string name;
@@ -38,11 +38,11 @@ namespace SQLRepository
         public SqlRepository(IDataContext context, ILoggerRepository logger):this(context) {
             _logger = logger;
         }
-        public SqlRepository(IDataContext context, ILoggerRepository logger, IChacheRepository<T> cache):this(context, logger)
+        public SqlRepository(IDataContext context, ILoggerRepository logger, ICacheRepository<T> cache):this(context, logger)
         {
             _cache = cache;
         }
-        public SqlRepository(IDataContext context, IChacheRepository<T> cache):this(context)
+        public SqlRepository(IDataContext context, ICacheRepository<T> cache):this(context)
         {
             _cache = cache;
         }
