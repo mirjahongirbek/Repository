@@ -3,12 +3,12 @@ using RepositoryRule.Entity;
 
 namespace Entity
 {
-    [EntityDescription("selectData")]
+    [Joha("selectData")]
     public class SelectData:IEntity<string>
     {
-        [EntityDescription("SomeValue",FontType.Value)]
+        [Props("SomeValue",FontType.Value)]
         public string Id { get; set; }
-        [EntityDescription("Label", FontType.Label)]
+        [Props("Label", FontType.Label)]
         public string Name { get; set; }
     }
 }

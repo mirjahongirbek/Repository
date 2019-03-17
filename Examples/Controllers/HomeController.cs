@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GenericControllers;
 using Entity;
 using System;
+using System.Security.Claims;
 
 namespace Examples.Controllers
 {
@@ -25,6 +26,12 @@ namespace Examples.Controllers
 
         public IActionResult Privacy()
         {
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, ""),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, "sd")
+                };
+
             return Ok();
         }
 
