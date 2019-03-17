@@ -16,7 +16,7 @@ namespace Examples.Controllers
            )
             : base(new List<Type>() {typeof(Data),typeof(SelectData)},new List<object>() { data, selectdata })
         {
-
+            
         }
         public IActionResult Index()
         {

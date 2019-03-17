@@ -10,6 +10,7 @@ using RepositoryRule.Attributes;
 using GenericController.State;
 using RepositoryRule.LoggerRepository;
 using System.Diagnostics;
+using RepositoryRule.Entity;
 
 namespace GenericControllers
 {
@@ -22,7 +23,11 @@ namespace GenericControllers
         Dictionary<string, Type> _types;
         Dictionary<string, object> _service;
         ILoggerRepository _logger;
-        public GenericController(List<Type> types, List<object> serviceList, ILoggerRepository logger= null)
+        public GenericController(List<Type> types,
+            List<object> serviceList, 
+            ILoggerRepository logger= null
+           
+            )
         {
             _service = new Dictionary<string, object>();
             _types = new Dictionary<string, Type>();
@@ -59,22 +64,14 @@ namespace GenericControllers
                 {
                     var attribute = i.GetCustomAttribute<EntityDescriptionAttribute>();
                     
-                    PropsResult props = new PropsResult();
                     if (attribute == null)
                     {
                         EntityDescriptionAttribute attr = new EntityDescriptionAttribute(i.Name);
-                        props.Type = i.PropertyType.Name.ConvertFront();
-                        props.Label = i.Name;
                         result.Add(Char.ToLower(i.Name[0]) + i.Name.Substring(1), attr);
                     }
                     else
                     {
                         
-                        props.Type = attribute.FontType.ToString();
-                        props.OtherTable = attribute.Name;
-                        props.Label = attribute.Label;
-                        props.Show = attribute.Show;
-                        props.ShowAdd = attribute.ShowAdd;
                         result.Add(Char.ToLower(i.Name[0]) + i.Name.Substring(1), attribute);
                     }
                     

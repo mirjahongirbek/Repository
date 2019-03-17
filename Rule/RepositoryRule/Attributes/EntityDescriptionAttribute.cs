@@ -13,6 +13,9 @@ namespace RepositoryRule.Attributes
         public string Label { get; set; }
         public FontType FontType { get; set; }
         public bool ShowAdd { get; set; }
+        public string Url { get; set; }
+        public string Regular { get; set; }
+        public string TypeId { get; set; }
         public bool Show { get; set; }
         public bool GetAllForeign { get; set; }
         public string FrontUrl { get; set; }
@@ -47,6 +50,8 @@ namespace RepositoryRule.Attributes
             FontType[] types= null,
             string foreignTable=null, 
             string name=null,
+            string url=null,
+            string reg=null,
             bool getAllForeign= false, 
             bool hideAdd = false,
             bool hideshow = false,

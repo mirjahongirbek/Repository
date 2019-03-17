@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,23 +8,30 @@ namespace RepositoryRule.Attributes
     public enum FontType
     {
 
-        Number,
-        Boolean,
-        CheckBox,
-        Radio,
-        Select,
-        MultiSelect,
-        StringList,
-        IntList,
-        String,
-        EditDelete,
-        DateTime,
-        Button,
-        Edit,
-        Delete,
-        Value,
-        Label,
+        Number = 1,
+        String = 2,
+        DateTime = 3,
+        TextArea = 4,
+
+        Boolean = 25,
+        CheckBox = 26,
+        Radio = 27,
+        Select = 28,
+        MultiSelect = 29,
+
+        StringList = 50,
+        IntList = 51,
+
         
+        EditButton = 75,
+        Delete = 76,
+        EditDelete = 80,
+
+        Value = 100,
+        Label = 101,
+
+
+
     }
 
 }

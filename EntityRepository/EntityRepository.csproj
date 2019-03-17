@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.3</Version>
+    <Version>0.0.4</Version>
     <PackageId>Joha.EntityRepository</PackageId>
     <Authors>Joha</Authors>
     <Company>Joha</Company>
