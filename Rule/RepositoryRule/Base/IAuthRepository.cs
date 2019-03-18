@@ -12,6 +12,7 @@ namespace RepositoryRule.Base
     {
         Task<T> GetAsync(T model);
         Task<AuthResult> LoginAsync(T model);
+        Task<T> GetUser(T model);
         Task<bool> IsLoginedAsync(T model);
         Task<AuthResult> RegisterAsync();
         Task Logout();

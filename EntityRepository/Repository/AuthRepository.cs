@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryRule.Base;
 using RepositoryRule.Entity;
+using System;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -33,7 +33,7 @@ namespace EntityRepository.Repository
                 _db.FirstOrDefault();
             }
              _db.FirstOrDefault();
-
+            return null;
         }
         public virtual async Task<bool> IsLoginedAsync(T model)
         {
@@ -53,10 +53,6 @@ namespace EntityRepository.Repository
         {
             throw new System.NotImplementedException();
         }
-        protected SymmetricSecurityKey GetSecurityKey()
-        {
-            return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(AutoOption.Key));
-        }
         public async Task<T> Get(T model)
         {
             return _db.FirstOrDefault(m => model.UserName == m.UserName);
@@ -69,6 +65,24 @@ namespace EntityRepository.Repository
         public Task<T> GetAsync(T model)
         {
             throw new System.NotImplementedException();
+        }
+
+        public async Task<T> GetUser(T model)
+        {
+            try
+            {
+                if (model == null || string.IsNullOrEmpty(model.UserName) || string.IsNullOrEmpty(model.Password))
+                {
+                    return null;
+                }
+                var password = HashPassword(model.Password);
+                return _db.FirstOrDefault(m => m.UserName == model.UserName && m.Password == password);
+
+            }catch(Exception ext)
+            {
+                throw new Exception(ext.Message, ext);
+            }
+            
         }
     }
 }

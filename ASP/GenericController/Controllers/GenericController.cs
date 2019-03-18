@@ -7,12 +7,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RepositoryRule.Attributes;
-using GenericController.State;
 using RepositoryRule.LoggerRepository;
 using System.Diagnostics;
-using RepositoryRule.Entity;
+using RepositoryRule.Base;
 
-namespace GenericControllers
+namespace GenericControllers.Controllers
 {
     //Add Next Log Service
     //Add next GetType changes
@@ -23,17 +22,21 @@ namespace GenericControllers
         Dictionary<string, Type> _types;
         Dictionary<string, object> _service;
         ILoggerRepository _logger;
+        IEnumerable<object> _commands;
         public GenericController(List<Type> types,
-            List<object> serviceList, 
-            ILoggerRepository logger= null
-           
+            List<object> serviceList,
+            IEnumerable<object> commands= null
             )
         {
+            if (commands != null)
+            {
+
+            }
             _service = new Dictionary<string, object>();
             _types = new Dictionary<string, Type>();
             for (var i = 0; i < types.Count; i++)
             {
-                var a = types[i].GetCustomAttribute<EntityDescriptionAttribute>();
+                var a = types[i].GetCustomAttribute<PropsAttribute>();
                 if (a != null)
                 {
                     _types.Add(a.Name, types[i]);
@@ -45,7 +48,7 @@ namespace GenericControllers
                     _service.Add(types[i].Name, serviceList[i]);
                 }
             }
-            _logger = logger;
+            //_logger = logger;
         }
         #region Props
         [HttpGet]
@@ -59,35 +62,34 @@ namespace GenericControllers
                 {
                     return GetResponse(null, new { });
                 }
-                Dictionary<string, EntityDescriptionAttribute> result = new Dictionary<string, EntityDescriptionAttribute>();
+                Dictionary<string, PropsAttribute> result = new Dictionary<string, PropsAttribute>();
                 foreach (var i in type.GetProperties())
                 {
-                    var attribute = i.GetCustomAttribute<EntityDescriptionAttribute>();
-                    
+                    var attribute = i.GetCustomAttribute<PropsAttribute>();
+
                     if (attribute == null)
                     {
-                        EntityDescriptionAttribute attr = new EntityDescriptionAttribute(i.Name);
+                        PropsAttribute attr = new PropsAttribute(i.Name);
                         result.Add(Char.ToLower(i.Name[0]) + i.Name.Substring(1), attr);
                     }
                     else
                     {
-                        
                         result.Add(Char.ToLower(i.Name[0]) + i.Name.Substring(1), attribute);
                     }
-                    
+
                 }
                 stop.Stop();
                 stop = null;
                 return GetResponse(result);
             }
-            catch(Exception ext)
+            catch (Exception ext)
             {
                 stop.Stop();
                 string code = Guid.NewGuid().ToString();
                 _logger?.CatchError("GetProps", stop.ElapsedMilliseconds, id, ext, "GetProps", code);
-                return GetResponse(status:400, code:code);
+                return GetResponse(status: 400, code: code);
             }
-            
+
         }
         [HttpGet]
         public ResponseData GetAllName()
@@ -96,22 +98,24 @@ namespace GenericControllers
             try
             {
                 return GetResponse(_types?.Keys);
-                
+
             }
-            catch(Exception ext)
+            catch (Exception ext)
             {
                 string code = Guid.NewGuid().ToString();
-              _logger?.CatchError("GetAll Name", 0, null, ext, "GetAllName", code);
-                return GetResponse(status: 400, code:code);
+                _logger?.CatchError("GetAll Name", 0, null, ext, "GetAllName", code);
+                return GetResponse(status: 400, code: code);
             }
-            
+
         }
         #endregion
 
         #region Get Request List
+
         [HttpGet]
         public virtual async Task<ResponseData> GetById(TKey id, string name)
         {
+            
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
@@ -129,8 +133,8 @@ namespace GenericControllers
             {
                 stop.Stop();
                 string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("Get by Id", stop.ElapsedMilliseconds, new { Id = id, name = name }, ext,"GetById", code);
-                return GetResponse(status:400, code:code);
+                _logger?.CatchError("Get by Id", stop.ElapsedMilliseconds, new { Id = id, name = name }, ext, "GetById", code);
+                return GetResponse(status: 400, code: code);
             }
         }
         [HttpGet]
@@ -143,22 +147,23 @@ namespace GenericControllers
                 {
                     return GetResponse();
                 }
-               var type= _types.FirstOrDefault(m => m.Key == id).Value;
-                if(type== null)
+                var type = _types.FirstOrDefault(m => m.Key == id).Value;
+                if (type == null)
                 {
-                    return GetResponse(status:403);
+                    return GetResponse(status: 403);
                 }
-               var service= _service[id];
+                var service = _service[id];
 
-              var result= (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] {0,"GetAllCount" });
+                var result = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { 0, "GetAllCount" });
                 stop.Stop();
                 return GetResponse(result);
-            }catch(Exception ext)
+            }
+            catch (Exception ext)
             {
                 stop.Stop();
                 string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("GetAllCount",stop.ElapsedMilliseconds,id, ext, "GetAllCount", code);
-              return  GetResponse(status:400, code:code);
+                _logger?.CatchError("GetAllCount", stop.ElapsedMilliseconds, id, ext, "GetAllCount", code);
+                return GetResponse(status: 400, code: code);
             }
         }
         [HttpGet]
@@ -183,7 +188,7 @@ namespace GenericControllers
                 stop.Stop();
                 string code = Guid.NewGuid().ToString();
                 _logger?.CatchError("GetAll", stop.ElapsedMilliseconds, id, ext, "GetAll", code);
-                return GetResponse(status:400, code:code);
+                return GetResponse(status: 400, code: code);
             }
         }
         #endregion
@@ -204,7 +209,7 @@ namespace GenericControllers
                 {
                     return GetResponse();
                 }
-                var result = JsonConvert.DeserializeObject(model.data.ToString(), type, 
+                var result = JsonConvert.DeserializeObject(model.data.ToString(), type,
                             new JsonSerializerSettings
                             {
                                 NullValueHandling = NullValueHandling.Ignore
@@ -219,7 +224,7 @@ namespace GenericControllers
                 stop.Stop();
                 string code = Guid.NewGuid().ToString();
                 _logger?.CatchError("Add Data", stop.ElapsedMilliseconds, model, ext, "AddData", code);
-                return GetResponse(status:400,code: code);
+                return GetResponse(status: 400, code: code);
             }
         }
 
@@ -258,7 +263,7 @@ namespace GenericControllers
                 stop.Stop();
                 string code = Guid.NewGuid().ToString();
                 _logger?.CatchError("DataWithCount", stop.ElapsedMilliseconds, model, ext, "DataWithCount", code);
-                return GetResponse(status:400, code:code);
+                return GetResponse(status: 400, code: code);
             }
         }
         [HttpPost]
@@ -295,8 +300,8 @@ namespace GenericControllers
             {
                 stop.Stop();
                 string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("PostData",stop.ElapsedMilliseconds,model, ext, "PostData", code);
-                return GetResponse(status:400, code:code);
+                _logger?.CatchError("PostData", stop.ElapsedMilliseconds, model, ext, "PostData", code);
+                return GetResponse(status: 400, code: code);
             }
         }
 
@@ -330,7 +335,7 @@ namespace GenericControllers
                 stop.Stop();
                 string code = Guid.NewGuid().ToString();
                 _logger?.CatchError("UpdateData", stop.ElapsedMilliseconds, model, ext, "UpdateData", code);
-                return GetResponse(status:400, code:code);
+                return GetResponse(status: 400, code: code);
             }
         }
         #endregion
@@ -344,15 +349,15 @@ namespace GenericControllers
             {
                 return GetResponse();
             }
-            catch(Exception ext)
+            catch (Exception ext)
             {
-               string code= Guid.NewGuid().ToString();
-              _logger?.CatchError(code, stop.ElapsedMilliseconds, ext, ext,"DeleteData",code);
-                return GetResponse(status:400, code: code);
+                string code = Guid.NewGuid().ToString();
+                _logger?.CatchError(code, stop.ElapsedMilliseconds, ext, ext, "DeleteData", code);
+                return GetResponse(status: 400, code: code);
             }
         }
         #endregion
-        protected virtual ResponseData GetResponse(object data = null,   object err = null, int status=200, string code=null)
+        protected virtual ResponseData GetResponse(object data = null, object err = null, int status = 200, string code = null)
         {
             if (err != null)
             {
@@ -362,6 +367,5 @@ namespace GenericControllers
             return new ResponseData() { result = data };
         }
     }
-
 
 }

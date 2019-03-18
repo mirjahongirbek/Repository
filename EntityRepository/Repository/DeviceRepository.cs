@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using EntityRepository.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using RepositoryRule.Base;
 using RepositoryRule.CacheRepository;
 using RepositoryRule.Entity;
-using EntityRepository.State;
 namespace EntityRepository.Repository
 {
     public class DeviceRepository<T> : IUserDeviceRepository<T, int>
@@ -65,7 +62,6 @@ namespace EntityRepository.Repository
                 throw new Exception("", ext);
             }
         }
-
         public virtual async Task<bool> DeviceExist(T model, IAuthUser<int> user)
         {
             try
@@ -85,26 +81,24 @@ namespace EntityRepository.Repository
                 throw new Exception("", ext);
             }
         }
-
         public virtual async Task<T> Get(int id)
         {
             try
             {
                 return await _db.FirstOrDefaultAsync(m => m.Id == id);
-                
+
             }
             catch (Exception ext)
             {
                 throw new Exception("", ext);
             }
         }
-
-        public virtual async Task<IEnumerable<T>> GetAll()
+        public virtual async Task<IEnumerable<T>> FindAll()
         {
             try
             {
                 return await _db.ToListAsync();
-                
+
             }
             catch (Exception ext)
             {
@@ -117,59 +111,87 @@ namespace EntityRepository.Repository
             {
                 return _db.Where(selector);
 
-            }catch(Exception ext)
+            }
+            catch (Exception ext)
             {
                 throw new Exception(ext.Message, ext);
             }
         }
+        //TODO change
         public virtual async Task<AuthResult> LoginAsync(T model, IAuthUser<int> user)
         {
             try
             {
-               var claims= GetIdentity(user.UserName,user.Roles.ToList());
-                var now = DateTime.Now;
-                var jwt = new JwtSecurityToken(
-                     issuer: AuthOption.ISSUER,
-                     audience: AuthOption.AUDINECE,
-                     notBefore: now,
-                     claims:claims.Claims,
-                     expires: now.Add(TimeSpan.FromMinutes(AuthOption.LifeTime)),
-                     signingCredentials: new SigningCredentials(State.State.GetSecurityKey(), SecurityAlgorithms.HmacSha256));
-                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-                model.RefreshToken = "123456789";// joha
-                
-                model.RefreshToken
-               var result= new AuthResult
-                {
-                     AcessToken= encodedJwt,
-                     RefreshToken="sd"
-                };
-                return result;
+                var claims = GetIdentity(user.UserName, user.Roles.ToList());
+                var authResult = State.State.GetAuth(claims, model);
+
+                return authResult;
             }
             catch (Exception ext)
             {
                 throw new Exception(ext.Message, ext);
             }
         }
-
-        public virtual async Task<AuthResult> UpdateToken(string refreshToken)
+        public virtual async Task<T> GetByRefresh(string refreshToken)
         {
             try
             {
-                var device= _cache.FindFirst(m => m.RefreshToken == refreshToken);
-               if(device== null)
+                var model = _cache.FindFirst(m => m.RefreshToken == refreshToken);
+                if (model != null)
                 {
-
+                    return model;
                 }
-
-                Save();
+                return _db.FirstOrDefault(m => m.RefreshToken == refreshToken);
             }
             catch (Exception ext)
             {
-                throw new Exception("", ext);
+                throw new Exception(ext.Message, ext);
             }
         }
+        public virtual async Task<AuthResult> UpdateToken(T model, IAuthUser<int> user)
+        {
+            try
+            {
+                if (model == null || model.Id == 0)
+                {
+                    throw new System.DivideByZeroException();
+                }
+                var claims = GetIdentity(user.UserName, user.Roles.ToList());
+                var authResult = State.State.GetAuth(claims, model);
+                model.AccessToken = authResult.AcessToken;
+                model.RefreshToken = authResult.RefreshToken;
+                await Update(model);
+                return authResult;
+            }
+            catch (Exception ext)
+            {
+                throw new Exception(ext.Message, ext);
+            }
+        }
+        public virtual async Task<bool> Logout(string token)
+        {
+            try
+            {
+                var model = _cache.FindFirst(m => m.RefreshToken == token);
+                if (model == null)
+                {
+                    model = _db.FirstOrDefault(m => m.AccessToken == token);
+                    model.AccessToken = "";
+                    model.RefreshToken = "";
+                    await Update(model);
+                }
+                return true;
+            }
+            catch (Exception ext)
+            {
+                throw new Exception(ext.Message, ext);
+            }
 
+        }
+        public virtual async Task<bool> Logout(string token, string refresh)
+        {
+            return await Logout(token);
+        }
         public virtual async Task Update(T model)
         {
             try
@@ -186,35 +208,11 @@ namespace EntityRepository.Repository
         private ClaimsIdentity GetIdentity(string username, List<IRoleUser<int>> rols)
         {
 
-            /*
-             var now = DateTime.UtcNow;
-            // создаем JWT-токен
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-             
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = identity.Name
-            };
- 
-            // сериализация ответа
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
-  
-             
-             */
             var claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, username),
                 };
-            foreach(var i in rols)
+            foreach (var i in rols)
             {
                 claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, i.Name));
             }
@@ -223,64 +221,8 @@ namespace EntityRepository.Repository
             new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);
             return claimsIdentity;
-           
+
         }
+              
     }
 }
-/*
-  [HttpPost("/token")]
-        public async Task Token()
-        {
-            var username = Request.Form["username"];
-            var password = Request.Form["password"];
- 
-            var identity = GetIdentity(username, password);
-            if (identity == null)
-            {
-                Response.StatusCode = 400;
-                await Response.WriteAsync("Invalid username or password.");
-                return;
-            }
- 
-            var now = DateTime.UtcNow;
-            // создаем JWT-токен
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-             
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = identity.Name
-            };
- 
-            // сериализация ответа
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
-        }
- 
-        private ClaimsIdentity GetIdentity(string username, string password)
-        {
-            Person person = people.FirstOrDefault(x => x.Login == username && x.Password == password);
-            if (person != null)
-            {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
-                };
-                ClaimsIdentity claimsIdentity =
-                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                    ClaimsIdentity.DefaultRoleClaimType);
-                return claimsIdentity;
-            }
- 
-            // если пользователя не найдено
-            return null;
-        }
-     */

@@ -1,27 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using GenericController.Entity;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace GenericController.State
 {
     public static class State
     {
-        static Dictionary<string, string> Data = new Dictionary<string, string>() {
-            { "Int32","Number"},
-            { "Int16","Number"},
-            { "Int64","Number"},
-            { "UInt64","Number"},
-            { "UInt32", "Number"},
-            { "Double","Number"},
-            { "Single","Number"},
-            { "List`1","List"},
-            { "Dictionary`2","Dictionary"}
-        };
-        public static string ConvertFront(this string sdt)
+       public static bool HasMethod(this object objectToCheck, string methodName)
         {
-            var result = Data.FirstOrDefault(m => m.Key == sdt).Value;
-            if (string.IsNullOrEmpty(result))
-                return sdt;
-            return result;
+            var type = objectToCheck.GetType();
+            return type.GetMethod(methodName) != null;
+        }
+        public static ResponseData GetResponse(this ControllerBase cBase, object response= null, int status=200, object err= null)
+        {
+            cBase.HttpContext.Response.StatusCode = status;
+            return new ResponseData();
         }
 
     }

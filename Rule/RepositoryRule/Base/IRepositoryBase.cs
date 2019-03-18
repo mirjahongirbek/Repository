@@ -341,5 +341,4 @@ namespace RepositoryRule.Base
             #endregion
         Type GetGenericType();
     }
-
 }

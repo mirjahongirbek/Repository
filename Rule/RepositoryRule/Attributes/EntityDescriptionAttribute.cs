@@ -19,8 +19,6 @@ namespace RepositoryRule.Attributes
         public bool Show { get; set; }
         public bool GetAllForeign { get; set; }
         public string FrontUrl { get; set; }
-        //public string  { get; set; }
-        public string Regular { get; set; }
         public bool Required { get; set; }
         public string UserReference { get; set; }
         public short LangId { get; set; }
@@ -74,20 +72,6 @@ namespace RepositoryRule.Attributes
         
         #endregion
        
-    }
-
-    [AttributeUsage(AttributeTargets.Class)]
-    public class JohaAttribute : System.Attribute
-    {
-        public JohaAttribute(string name, bool getAll=true)
-        {
-            Name = name;
-            GetAll = getAll;
-
-        }
-        public string Name { get; set; }
-        public bool GetAll { get; set; }
-
     }
 
 }

@@ -9,8 +9,9 @@ namespace RepositoryRule.Entity
         string Description { get; set; }
 
     }
-    public abstract class AuthResult
+    public interface  ICommandResult
     {
-
+        bool Success { get; }
+        string ErrorText { get; set; }
     }
 }

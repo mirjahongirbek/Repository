@@ -29,9 +29,6 @@ namespace RepositoryRule.Attributes
 
         Value = 100,
         Label = 101,
-
-
-
     }
 
 }

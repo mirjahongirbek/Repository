@@ -7,7 +7,7 @@ namespace RepositoryRule.Entity
     {
         string UserName { get; set; }
         string Email { get; set; }
-        string Passwor { get; set; }
+        string Password { get; set; }
 
         ICollection<IRoleUser<TKey>> Roles { get; set; }
         ICollection<IUserDevice<TKey>> DeviceList { get; set; }

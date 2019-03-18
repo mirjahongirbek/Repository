@@ -8,6 +8,6 @@ namespace RepositoryRule.Entity
         string UserName { get; set; }
         string Email { get; set; }
         string PhoneNumber { get; set; }
-       ICollection<RolsEntity<TKey>> Rols { get; set; }
+       ICollection<IRoleUser<TKey>> Rols { get; set; }
     }
 }

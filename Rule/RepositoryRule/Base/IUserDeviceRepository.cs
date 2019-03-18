@@ -18,8 +18,9 @@ namespace RepositoryRule.Base
         Task<T> Get(TKey id);
         Task<IEnumerable<T>> FindAll();
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> selector);
-        Task<AuthResult> UpdateToken(string refreshToken);
-
+        Task<AuthResult> UpdateToken(T model, IAuthUser<int> user);
+        Task<T> GetByRefresh(string refreshToken);
+        Task<bool> Logout(string token);
     }
 
 }
