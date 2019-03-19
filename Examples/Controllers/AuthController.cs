@@ -1,21 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ServiceList;
-using System.Collections.Generic;
+﻿using ServiceList;
 
 using Entity;
-using System;
-using System.Security.Claims;
 using GenericControllers.Controllers;
 
 namespace Examples.Controllers
 {
-
-    public class HomeController : GenericController<int>
+    public class AuthController:AuthController<Entity.User,RoleUser, UserDevice, int>
     {
-        public HomeController(ICompanyService company, IProductService product) : 
-            base(new List<Type> { typeof(Company), typeof(Product)},
-            new List<object> { company, product}
-            )
+        public AuthController(
+            IAuthUserService user,
+            IRoleService role,
+            IUserDeviceService device
+            ) : base(user, role, device)
         {
 
         }

@@ -10,6 +10,7 @@ namespace RepositoryRule.State
 {
     public static class State
     {
+        public static bool IsDevelopment { get; set; }
         public static List<string> CheckJwt(this object obj, ClaimsPrincipal user)
         {
             Type type = obj.GetType();

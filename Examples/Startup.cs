@@ -2,12 +2,15 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Entity;
+using EntityExample.Db;
+using EntityRepository.Context;
 using Examples.Db;
 using LoggingRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -53,10 +56,25 @@ namespace Examples
                 var aa = provider.GetService<DataBase>();
                return aa;//provider.GetService<ProductContext>();
             });
+            //services.AddEntityFrameworkSqlServer().AddDbContext<EntityDatabase>(options =>
+            //  options.UseSqlServer(connection));
+
+            services.AddScoped<IDataContext>(provider => provider.GetService<EntityDatabase>());
+            //services.AddScoped<IEntityDataService, EntityDataService>();
+
+            services.AddScoped<ICompanyService, CompanyService>();
+            services.AddScoped<IProductService, ProductService>();
+
+            services.AddScoped<IAuthUserService, AuthUserService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserDeviceService, UserDeviceService>();
+            //services.AddScoped<IRoleRepository<Entity.RoleUser, int>, EntityRepository.Repository.RoleRepository<Entity.RoleUser>>();
+            //services.AddScoped<IUserDeviceRepository<Entity.UserDevice, Entity.RoleUser, int>, EntityRepository.Repository.DeviceRepository<Entity.UserDevice, Entity.RoleUser>>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
+           
             //containerBuilder.RegisterType<DataService>().As<IDataService>();
             //containerBuilder.RegisterType<SelectDataService>().As<ISelectDataService>();
             //containerBuilder.RegisterGeneric(typeof(MongoRepository<>))
@@ -79,6 +97,7 @@ namespace Examples
         {
             if (env.IsDevelopment())
             {
+                RepositoryRule.State.State.IsDevelopment = true;
                 app.UseDeveloperExceptionPage();
             }
             else

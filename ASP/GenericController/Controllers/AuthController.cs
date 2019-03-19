@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using RepositoryRule.Base;
 using RepositoryRule.Entity;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GenericControllers.Controllers
@@ -14,21 +15,28 @@ namespace GenericControllers.Controllers
         where IUserRoles : class, IRoleUser<TKey>
         where IUserDevice : class, IUserDevice<TKey>
     {
+        Dictionary<string, Type> props;
+
         #region Header
         protected IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey> _auth;
         protected IUserDeviceRepository<IUserDevice, IUserRoles, TKey> _device;
         protected IRoleRepository<IUserRoles, TKey> _rols;
         public AuthController(
             IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey> auth,
-            IUserDeviceRepository<IUserDevice, IUserRoles, TKey> device,
-            IRoleRepository<IUserRoles, TKey> rols
+           IRoleRepository<IUserRoles, TKey> rols,
+             IUserDeviceRepository<IUserDevice, IUserRoles, TKey> device
             )
         {
+
             _auth = auth;
             _rols = rols;
             _device = device;
         }
 
+        public ResponseData GetProps(string name)
+        {
+
+        }
         [HttpPost]
         public virtual async Task<ResponseData> Login([FromBody]LoginViewModal modal)
         {
@@ -64,13 +72,14 @@ namespace GenericControllers.Controllers
             }
             catch (Exception ext)
             {
-
+                return this.GetResponse(ext);
             }
         }
         public ResponseData Lagout()
         {
             return this.GetResponse();
         }
+        #region
         private IAuth CreateAuth()
         {
             return (IAuth)Activator.CreateInstance(typeof(IAuth));
@@ -79,6 +88,7 @@ namespace GenericControllers.Controllers
         {
             return (IUserDevice)Activator.CreateInstance(typeof(IUserDevice));
         }
+        #endregion
         #endregion
     }
 
