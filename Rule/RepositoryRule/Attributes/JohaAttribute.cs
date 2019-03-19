@@ -12,7 +12,14 @@ namespace RepositoryRule.Attributes
         public bool GetAll { get; set; }
         public bool IAuth { get; set; }
         public bool CheckRole { get; set; }
+        public bool ReturnModel { get; set; }
+        public List<string> Fields { get; set; }
+        public JohaAttribute()
+        {
+            CheckRole = false;
+            ReturnModel = true;
 
+        }
     }
 
 

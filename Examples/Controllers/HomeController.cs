@@ -1,26 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceList;
 using System.Collections.Generic;
-using GenericControllers;
+
 using Entity;
 using System;
 using System.Security.Claims;
+using GenericControllers.Controllers;
 
 namespace Examples.Controllers
 {
     public class HomeController: GenericController<string>
     {
         readonly IDataService _data;
-        public HomeController(IDataService data,
-            ISelectDataService selectdata
+        public HomeController(IDataService data
+        
            )
-            : base(new List<Type>() {typeof(Data),typeof(SelectData)},new List<object>() { data, selectdata })
+            : base(new List<Type>() {typeof(Data)},new List<object>() { data,  })
         {
             
         }
         public IActionResult Index()
         {
-           // _data.Add(new Entity.Data() { Id = ObjectId.GenerateNewId().ToString(), Name = "sd" });
+          
             return Ok();
         }
 
@@ -41,4 +42,5 @@ namespace Examples.Controllers
             return Ok();
         }
     }
+    
 }

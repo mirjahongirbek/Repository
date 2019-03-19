@@ -119,8 +119,6 @@ namespace GenericControllers.Controllers
         public virtual async Task<ResponseData> GetById(TKey id, string name)
         {
 
-            
-
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
@@ -220,12 +218,16 @@ namespace GenericControllers.Controllers
                                 NullValueHandling = NullValueHandling.Ignore
                             });
                 var service = _service[model.name];
-                result.CheckJwt(User);
+                var errlist= result.CheckJwt(User);
+                if (errlist.Count > 0)
+                {
+                    return GetResponse(errlist);
+                }
+
                 #region
                 var command = _commands.FirstOrDefault(m => m.Name == model.name);
                 await command.Add(result,User);
                 #endregion
-
                 service.GetType().GetMethod("Add").Invoke(service, new object[] { result, 152, "PostData" });
                 stop.Stop();
                 return GetResponse();

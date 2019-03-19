@@ -14,11 +14,7 @@ namespace ServiceList
     {
 
     }
-    public interface ISelectDataService:IRepositoryBase<SelectData, string>
-    {
-
-    }
-
+   
     public class DataService : MongoRepository.MongoRepository<Data>, IDataService
     {
         public DataService(IMongoContext database) : base(database)

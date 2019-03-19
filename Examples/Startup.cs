@@ -39,24 +39,23 @@ namespace Examples
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            //services.AddSingleton<IDataService, DataService>();
+           // services.AddSingleton<IDataService, DataService>();
             //services.AddSingleton<IMongoContext, MongoContext>();
-
-            var log = new LoggerConfiguration().WriteTo.Seq("http://localhost:5341").WriteTo.Console()
-            .CreateLogger();
+            //var log = new LoggerConfiguration().WriteTo.Seq("http://localhost:5341").WriteTo.Console()
+            //.CreateLogger();
             //.WriteTo.Stackify()
             //.CreateLogger();
             services.AddCors();
-
+           
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
-            containerBuilder.RegisterType<DataService>().As<IDataService>();
-            containerBuilder.RegisterType<SelectDataService>().As<ISelectDataService>();
-            containerBuilder.RegisterGeneric(typeof(MongoRepository<>))
-                .As(typeof(IRepositoryBase<,>));
-            containerBuilder.RegisterType<SeilogLogger>().As<ILoggerRepository>();
-            containerBuilder.RegisterType<MongoContext>().As<IMongoContext>();
+            //containerBuilder.RegisterType<DataService>().As<IDataService>();
+            //containerBuilder.RegisterType<SelectDataService>().As<ISelectDataService>();
+            //containerBuilder.RegisterGeneric(typeof(MongoRepository<>))
+            //    .As(typeof(IRepositoryBase<,>));
+           // containerBuilder.RegisterType<SeilogLogger>().As<ILoggerRepository>();
+            //containerBuilder.RegisterType<MongoContext>().As<IMongoContext>();
 
             //containerBuilder.RegisterDynamicProxy(mbox => {
             //    mbox.Interceptors.AddTyped<MethodExecuteLoggerInterceptor>(args: new object[] {log});

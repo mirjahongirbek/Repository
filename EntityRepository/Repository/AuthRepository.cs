@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace EntityRepository.Repository
 {
-    public class AuthRepository<T> : IAuthRepository<T, int>
-        where T:class, IAuthUser<int>
+    public class AuthRepository<T, TRole, TDevice> : IAuthRepository<T, TRole, TDevice, int>
+        where T:class, IAuthUser<int, TRole, TDevice>
+        where TRole: class, IRoleUser<int>
+        where TDevice:class, IUserDevice<int>
     {
         protected DbSet<T> _db;
         public AuthRepository(IDataContext context)

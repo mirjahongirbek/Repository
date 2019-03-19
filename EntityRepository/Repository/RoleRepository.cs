@@ -4,7 +4,7 @@ using RepositoryRule.Entity;
 namespace EntityRepository.Repository
 {
     public class RoleRepository<T> : IRoleRepository<T, int>
-        where T : IRoleUser<int>
+        where T : class, IRoleUser<int>
     {
         public void Add(T model)
         {

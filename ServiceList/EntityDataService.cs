@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using Entity;
 using EntityRepository;
 using EntityRepository.Context;
@@ -13,26 +14,31 @@ namespace ServiceList
         {
         }
     }
-    public class ExampleCommand : IControllerCommand<EntityData, int>
+    public class ExampleCommand : IControllerCommand<int>
     {
         public string Name { get { return "Example"; } }
 
-        public Task<ICommandResult> Add(EntityData model, IAuthEntiy<int> user)
+        public Task<ICommandResult> Add<T>(T model, ClaimsPrincipal user)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ICommandResult> Delete(EntityData model, IAuthEntiy<int> user)
+        public Task<ICommandResult> Delete<T>(T model, ClaimsPrincipal user)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ICommandResult> Read(EntityData model, IAuthEntiy<int> user)
+        public Task<bool> GetById(int id, ClaimsPrincipal user)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ICommandResult> Update(EntityData model, IAuthEntiy<int> user)
+        public Task<ICommandResult> Read<T>(T model, ClaimsPrincipal user)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<ICommandResult> Update<T>(T model, ClaimsPrincipal user)
         {
             throw new System.NotImplementedException();
         }

@@ -11,8 +11,10 @@ using RepositoryRule.CacheRepository;
 using RepositoryRule.Entity;
 namespace EntityRepository.Repository
 {
-    public class DeviceRepository<T> : IUserDeviceRepository<T, int>
-        where T : class, IUserDevice<int>
+    public class DeviceRepository<T, TRole> : IUserDeviceRepository<T,TRole, int>
+        where T :class, IUserDevice<int>
+        where TRole:class,IRoleUser<int>
+
     {
         DbSet<T> _db;
         DbContext _context;
@@ -62,7 +64,7 @@ namespace EntityRepository.Repository
                 throw new Exception("", ext);
             }
         }
-        public virtual async Task<bool> DeviceExist(T model, IAuthUser<int> user)
+        public virtual async Task<bool> DeviceExist(T model, IAuthUser<int, TRole, T> user)
         {
             try
             {
@@ -117,21 +119,7 @@ namespace EntityRepository.Repository
                 throw new Exception(ext.Message, ext);
             }
         }
-        //TODO change
-        public virtual async Task<AuthResult> LoginAsync(T model, IAuthUser<int> user)
-        {
-            try
-            {
-                var claims = GetIdentity(user.UserName, user.Roles.ToList());
-                var authResult = State.State.GetAuth(claims, model);
-
-                return authResult;
-            }
-            catch (Exception ext)
-            {
-                throw new Exception(ext.Message, ext);
-            }
-        }
+        
         public virtual async Task<T> GetByRefresh(string refreshToken)
         {
             try
@@ -148,7 +136,7 @@ namespace EntityRepository.Repository
                 throw new Exception(ext.Message, ext);
             }
         }
-        public virtual async Task<AuthResult> UpdateToken(T model, IAuthUser<int> user)
+        public virtual async Task<AuthResult> UpdateToken(T model, IAuthUser<int, TRole, T> user)
         {
             try
             {
@@ -156,6 +144,7 @@ namespace EntityRepository.Repository
                 {
                     throw new System.DivideByZeroException();
                 }
+
                 var claims = GetIdentity(user.UserName, user.Roles.ToList());
                 var authResult = State.State.GetAuth(claims, model);
                 model.AccessToken = authResult.AcessToken;
@@ -205,7 +194,7 @@ namespace EntityRepository.Repository
             }
         }
         //protected virtual void 
-        private ClaimsIdentity GetIdentity(string username, List<IRoleUser<int>> rols)
+        private ClaimsIdentity GetIdentity(string username, List<TRole> rols)
         {
 
             var claims = new List<Claim>
@@ -223,6 +212,22 @@ namespace EntityRepository.Repository
             return claimsIdentity;
 
         }
-              
+        //TODO change
+        public async Task<AuthResult> LoginAsync(T model, IAuthUser<int, TRole, T> user)
+        {
+            try
+            {
+
+               var claims = GetIdentity(user.UserName, user.Roles.ToList());
+                var authResult = State.State.GetAuth(claims, model);
+                return authResult;
+            }
+            catch (Exception ext)
+            {
+                throw new Exception(ext.Message, ext);
+            }
+        }
+
+     
     }
 }

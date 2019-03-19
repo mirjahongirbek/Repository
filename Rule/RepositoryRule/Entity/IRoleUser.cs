@@ -10,5 +10,6 @@ namespace RepositoryRule.Entity
         int Position { get; set; }
         string Description { get; set; }
         RoleEnum Roles { get; set; }
+
     }
 }

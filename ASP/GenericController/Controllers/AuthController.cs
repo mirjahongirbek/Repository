@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 namespace GenericControllers.Controllers
 {
     public class AuthController<IAuth, IUserRoles, IUserDevice, TKey> : ControllerBase
-        where IAuth : class, IAuthUser<TKey>
+        where IAuth : class, IAuthUser<TKey, IUserRoles, IUserDevice>
         where IUserRoles : class, IRoleUser<TKey>
-        where IUserDevice : class, IUserDevice<TKey>
+        where IUserDevice :class, IUserDevice<TKey>
     {
         #region Header
-       protected IAuthRepository<IAuth, TKey> _auth;
-       protected IUserDeviceRepository<IUserDevice, TKey> _device;
+       protected IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey> _auth;
+       protected IUserDeviceRepository<IUserDevice, IUserRoles, TKey> _device;
        protected IRoleRepository<IUserRoles, TKey> _rols;
         public AuthController(
-            IAuthRepository<IAuth, TKey> auth,
-            IUserDeviceRepository<IUserDevice, TKey> device,
+            IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey>  auth,
+            IUserDeviceRepository<IUserDevice,IUserRoles, TKey> device,
             IRoleRepository<IUserRoles, TKey> rols
             )
         {

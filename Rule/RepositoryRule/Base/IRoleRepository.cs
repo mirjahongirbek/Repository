@@ -8,7 +8,7 @@ using RepositoryRule.Entity;
 namespace RepositoryRule.Base
 {
     public interface IRoleRepository<T, TKey>
-         where T : IRoleUser<TKey>
+         where T :class, IRoleUser<TKey>
     {
         void Add(T model);
         void Delete(T model);
