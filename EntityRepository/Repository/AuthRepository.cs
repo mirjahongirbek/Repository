@@ -27,7 +27,7 @@ namespace EntityRepository.Repository
         {
             //model.UserName
             bool isEmail = Regex.IsMatch(model.UserName, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
-           var password= HashPassword(model.Passwor);
+           var password= HashPassword(model.Password);
             if (isEmail)
             {
                 _db.FirstOrDefault();
