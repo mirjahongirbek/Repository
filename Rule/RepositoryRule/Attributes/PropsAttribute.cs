@@ -14,10 +14,10 @@ namespace RepositoryRule.Attributes
         public FontType FontType { get; set; }
         public bool ShowAdd { get; set; }
         public string Url { get; set; }
+        public string JWTKey { get; set; }
         public string Regular { get; set; }
         public string TypeId { get; set; }
         public bool Show { get; set; }
-        public bool GetAllForeign { get; set; }
         public string FrontUrl { get; set; }
         public bool Required { get; set; }
         public string UserReference { get; set; }
@@ -27,6 +27,7 @@ namespace RepositoryRule.Attributes
         #region Default Constructors
         public PropsAttribute(
             string name = null,
+            string jwtKey= null,
             string foreignTable = null,
             bool getAllForeign = false,
             bool hideAdd =false,
@@ -39,12 +40,13 @@ namespace RepositoryRule.Attributes
             LangId = langId;
             Regular = regular;
             Name = name;
-            GetAllForeign = getAllForeign;
-            ShowAdd = hideAdd;
+           ShowAdd = hideAdd;
+            JWTKey = jwtKey;
             Show = hideshow;
         }
        public PropsAttribute(string DefaultLabel, 
-            FontType font,
+              FontType font,
+             string jwtKey = null,
             FontType[] types= null,
             string foreignTable=null, 
             string name=null,
@@ -58,6 +60,7 @@ namespace RepositoryRule.Attributes
             string UserReference=null
             )
         {
+            JWTKey = jwtKey;
             FontType = font;
             Label = DefaultLabel;
             ForeignTable= foreignTable;
@@ -65,7 +68,8 @@ namespace RepositoryRule.Attributes
             Regular = regular;
             Name = name;
             Types = types;
-            GetAllForeign = getAllForeign;
+            JWTKey = jwtKey;
+            
             ShowAdd = hideAdd;
             Show = hideshow;
         }

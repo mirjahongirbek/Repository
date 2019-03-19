@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using RepositoryRule.Attributes;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace RepositoryRule.Entity
@@ -8,6 +9,6 @@ namespace RepositoryRule.Entity
         string Name { get; set; }
         int Position { get; set; }
         string Description { get; set; }
-        //ICollection IAuthUser<TKey> Users 
+        RoleEnum Roles { get; set; }
     }
 }

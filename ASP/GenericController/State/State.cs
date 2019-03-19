@@ -16,7 +16,6 @@ namespace GenericController.State
             cBase.HttpContext.Response.StatusCode = status;
             return new ResponseData();
         }
-
     }
 }
 

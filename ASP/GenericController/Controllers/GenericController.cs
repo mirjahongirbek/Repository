@@ -10,6 +10,8 @@ using RepositoryRule.Attributes;
 using RepositoryRule.LoggerRepository;
 using System.Diagnostics;
 using RepositoryRule.Base;
+using RepositoryRule.Entity;
+using RepositoryRule.State;
 
 namespace GenericControllers.Controllers
 {
@@ -22,15 +24,16 @@ namespace GenericControllers.Controllers
         Dictionary<string, Type> _types;
         Dictionary<string, object> _service;
         ILoggerRepository _logger;
-        IEnumerable<object> _commands;
+        IEnumerable<IControllerCommand<TKey>> _commands;
         public GenericController(List<Type> types,
             List<object> serviceList,
-            IEnumerable<object> commands= null
+            IEnumerable<IControllerCommand<TKey>> commands= null
+
             )
         {
             if (commands != null)
             {
-
+                _commands = commands;
             }
             _service = new Dictionary<string, object>();
             _types = new Dictionary<string, Type>();
@@ -115,7 +118,9 @@ namespace GenericControllers.Controllers
         [HttpGet]
         public virtual async Task<ResponseData> GetById(TKey id, string name)
         {
+
             
+
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
@@ -215,6 +220,12 @@ namespace GenericControllers.Controllers
                                 NullValueHandling = NullValueHandling.Ignore
                             });
                 var service = _service[model.name];
+                result.CheckJwt(User);
+                #region
+                var command = _commands.FirstOrDefault(m => m.Name == model.name);
+                await command.Add(result,User);
+                #endregion
+
                 service.GetType().GetMethod("Add").Invoke(service, new object[] { result, 152, "PostData" });
                 stop.Stop();
                 return GetResponse();

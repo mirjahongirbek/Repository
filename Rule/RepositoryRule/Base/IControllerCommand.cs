@@ -8,15 +8,16 @@ using RepositoryRule.Entity;
 
 namespace RepositoryRule.Base
 {
-    public interface IControllerCommand<T, TKey>
-        where T:class, IEntity<TKey>
+    public interface IControllerCommand<TKey>
+      
     {
         string Name { get; }
-        Task<ICommandResult> Add(T model, ClaimsPrincipal user);
-        Task<ICommandResult> Read(T model, ClaimsPrincipal user);
-        Task<ICommandResult> Update(T model, ClaimsPrincipal user);
-        Task<ICommandResult> Delete(T model, ClaimsPrincipal user);
-
+        Task<bool> GetById(TKey id, ClaimsPrincipal user);
+        Task<ICommandResult> Add<T>(T model, ClaimsPrincipal user);
+        Task<ICommandResult> Read<T>(T model, ClaimsPrincipal user);
+        Task<ICommandResult> Update<T>(T model, ClaimsPrincipal user);
+        Task<ICommandResult> Delete<T>(T model, ClaimsPrincipal user);
+        
 
     }
 }
