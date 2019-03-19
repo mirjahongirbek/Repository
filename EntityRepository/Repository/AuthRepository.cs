@@ -16,26 +16,16 @@ namespace EntityRepository.Repository
         where TDevice:class, IUserDevice<int>
     {
         protected DbSet<T> _db;
+        DbContext _context;
         public AuthRepository(IDataContext context)
         {
             _db = context.DataContext.Set<T>();
+            _context = context.DataContext;
         }
+        //TODO finish
         public virtual async  Task Delete(int id)
         {
           
-        }
-
-        public virtual Task<AuthResult> LoginAsync(T model)
-        {
-            //model.UserName
-            bool isEmail = Regex.IsMatch(model.UserName, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
-           var password= HashPassword(model.Password);
-            if (isEmail)
-            {
-                _db.FirstOrDefault();
-            }
-             _db.FirstOrDefault();
-            return null;
         }
         public virtual async Task<bool> IsLoginedAsync(T model)
         {
@@ -50,26 +40,26 @@ namespace EntityRepository.Repository
         {
             throw new System.NotImplementedException();
         }
-
         public virtual Task<AuthResult> RegisterAsync()
         {
             throw new System.NotImplementedException();
         }
-        public async Task<T> Get(T model)
+        public virtual async Task<T> Get(T model)
         {
             return _db.FirstOrDefault(m => model.UserName == m.UserName);
         }
+        
         protected virtual string HashPassword(string password)
         {
             return password;
         }
 
-        public Task<T> GetAsync(T model)
+        public virtual Task<T> GetAsync(T model)
         {
-            throw new System.NotImplementedException();
+            return null;
         }
 
-        public async Task<T> GetUser(T model)
+        public virtual async Task<T> GetUser(T model)
         {
             try
             {
@@ -85,6 +75,17 @@ namespace EntityRepository.Repository
                 throw new Exception(ext.Message, ext);
             }
             
+        }
+        public virtual  async Task<T> GetLoginOrEmail(string model)
+        {
+           return _db.FirstOrDefault(m => m.UserName == model || m.Email == model);
+        }
+
+        public async Task<bool> RegisterAsync(T model)
+        {
+            await _db.AddAsync(model);
+            _context.SaveChanges();
+            return true;
         }
     }
 }

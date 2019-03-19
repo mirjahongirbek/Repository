@@ -8,12 +8,12 @@ using RepositoryRule.Entity;
 
 namespace ServiceList
 {
-    public class EntityDataService : SqlRepository<EntityData>, IEntityDataService
-    {
-        public EntityDataService(IDataContext context) : base(context)
-        {
-        }
-    }
+  //  public class EntityDataService : SqlRepository<EntityData>, IEntityDataService
+  //  {
+  //      public EntityDataService(IDataContext context) : base(context)
+  //      {
+  //      }
+  //  }
     public class ExampleCommand : IControllerCommand<int>
     {
         public string Name { get { return "Example"; } }

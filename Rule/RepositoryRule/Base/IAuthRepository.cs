@@ -14,10 +14,11 @@ namespace RepositoryRule.Base
 
     {
         Task<T> GetAsync(T model);
-        Task<AuthResult> LoginAsync(T model);
+        //  Task<AuthResult> LoginAsync(T model);
+        Task<T> GetLoginOrEmail(string model);
         Task<T> GetUser(T model);
         Task<bool> IsLoginedAsync(T model);
-        Task<AuthResult> RegisterAsync();
+        Task<bool> RegisterAsync(T model);
         Task Logout();
         Task Delete(TKey id);
 

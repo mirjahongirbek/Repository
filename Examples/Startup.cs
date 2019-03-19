@@ -1,6 +1,7 @@
 ﻿using AspectCore.Extensions.Autofac;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Entity;
 using Examples.Db;
 using LoggingRepository;
 using Microsoft.AspNetCore.Builder;
@@ -46,7 +47,13 @@ namespace Examples
             //.WriteTo.Stackify()
             //.CreateLogger();
             services.AddCors();
-           
+            services.AddDbContext<DataBase>();
+            services.AddScoped<EntityRepository.Context.IDataContext>(provider =>
+            {
+                var aa = provider.GetService<DataBase>();
+               return aa;//provider.GetService<ProductContext>();
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);

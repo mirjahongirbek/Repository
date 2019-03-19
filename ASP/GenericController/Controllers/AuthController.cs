@@ -12,15 +12,15 @@ namespace GenericControllers.Controllers
     public class AuthController<IAuth, IUserRoles, IUserDevice, TKey> : ControllerBase
         where IAuth : class, IAuthUser<TKey, IUserRoles, IUserDevice>
         where IUserRoles : class, IRoleUser<TKey>
-        where IUserDevice :class, IUserDevice<TKey>
+        where IUserDevice : class, IUserDevice<TKey>
     {
         #region Header
-       protected IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey> _auth;
-       protected IUserDeviceRepository<IUserDevice, IUserRoles, TKey> _device;
-       protected IRoleRepository<IUserRoles, TKey> _rols;
+        protected IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey> _auth;
+        protected IUserDeviceRepository<IUserDevice, IUserRoles, TKey> _device;
+        protected IRoleRepository<IUserRoles, TKey> _rols;
         public AuthController(
-            IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey>  auth,
-            IUserDeviceRepository<IUserDevice,IUserRoles, TKey> device,
+            IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey> auth,
+            IUserDeviceRepository<IUserDevice, IUserRoles, TKey> device,
             IRoleRepository<IUserRoles, TKey> rols
             )
         {
@@ -30,21 +30,42 @@ namespace GenericControllers.Controllers
         }
 
         [HttpPost]
-        public async Task<ResponseData> Login([FromBody]LoginViewModal modal)
+        public virtual async Task<ResponseData> Login([FromBody]LoginViewModal modal)
         {
-           var auth= CreateAuth();
+            var auth = CreateAuth();
             auth.UserName = modal.UserName;
             auth.Password = modal.Password;
-           var user= await _auth.GetUser(auth);
-            if(user== null)
+            var user = await _auth.GetUser(auth);
+            if (user == null)
             {
                 return this.GetResponse(user);
             }
-           var device= CreateDevice();
+            var device = CreateDevice();
             device.DeviceId = modal.DeviceId;
             device.DeviceName = modal.DeviceName;
-          var result= await _device.LoginAsync(device, user);
+            var result = await _device.LoginAsync(device, user);
             return this.GetResponse(result);
+        }
+        [HttpPost]
+        public virtual async Task<ResponseData> Register([FromBody] IAuth model)
+        {
+            try
+            {
+                var user = await _auth.GetLoginOrEmail(model.UserName) ?? await _auth.GetLoginOrEmail(model.Email);
+                if (user != null)
+                {
+                    return this.GetResponse();
+                }
+                if (!await _auth.RegisterAsync(model))
+                {
+                    return this.GetResponse();
+                }
+           return     this.GetResponse(true);
+            }
+            catch (Exception ext)
+            {
+
+            }
         }
         public ResponseData Lagout()
         {

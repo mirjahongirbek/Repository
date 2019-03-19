@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RepositoryRule.Base;
 using ServiceList;
 
 namespace EntityExample
@@ -33,9 +34,17 @@ namespace EntityExample
             // добавляем контекст MobileContext в качестве сервиса в приложение
             services.AddEntityFrameworkSqlServer().AddDbContext<EntityDatabase>(options =>
                 options.UseSqlServer(connection));
-            
+
             services.AddScoped<IDataContext>(provider => provider.GetService<EntityDatabase>());
-            services.AddScoped<IEntityDataService, EntityDataService>();
+            //services.AddScoped<IEntityDataService, EntityDataService>();
+
+            services.AddScoped<ICompanyService, CompanyService>();
+            services.AddScoped<IProductService, ProductService>();
+              
+            services.AddScoped<IAuthRepository<Entity.User, Entity.RoleUser, Entity.UserDevice, int>, EntityRepository.Repository.AuthRepository<Entity.User, Entity.RoleUser, Entity.UserDevice>>();
+            services.AddScoped<IRoleRepository<Entity.RoleUser, int>, EntityRepository.Repository.RoleRepository<Entity.RoleUser>>();
+            services.AddScoped<IUserDeviceRepository<Entity.UserDevice, Entity.RoleUser, int>, EntityRepository.Repository.DeviceRepository<Entity.UserDevice, Entity.RoleUser>>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
