@@ -35,7 +35,14 @@ namespace GenericControllers.Controllers
 
         public ResponseData GetProps(string name)
         {
+            try
+            {
 
+            }catch(Exception ext)
+            {
+
+            }
+          return   this.GetResponse();
         }
         [HttpPost]
         public virtual async Task<ResponseData> Login([FromBody]LoginViewModal modal)

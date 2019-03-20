@@ -2,7 +2,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Entity;
-using EntityExample.Db;
 using EntityRepository.Context;
 using Examples.Db;
 using LoggingRepository;
@@ -59,7 +58,7 @@ namespace Examples
             //services.AddEntityFrameworkSqlServer().AddDbContext<EntityDatabase>(options =>
             //  options.UseSqlServer(connection));
 
-            services.AddScoped<IDataContext>(provider => provider.GetService<EntityDatabase>());
+            //services.AddScoped<IDataContext>(provider => provider.GetService<EntityDatabase>());
             //services.AddScoped<IEntityDataService, EntityDataService>();
 
             services.AddScoped<ICompanyService, CompanyService>();
