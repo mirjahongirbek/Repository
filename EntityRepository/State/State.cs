@@ -23,9 +23,7 @@ namespace EntityRepository.State
                     expires: now.Add(TimeSpan.FromMinutes(AuthOption.LifeTime)),
                     signingCredentials: new SigningCredentials(State.GetSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            
-            //model.RefreshToken = "123456789";// joha
-
+           
             AuthResult result = new AuthResult()
             {
                 AcessToken = encodedJwt,

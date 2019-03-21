@@ -68,7 +68,8 @@ namespace EntityRepository.Repository
                     return null;
                 }
                 var password = HashPassword(model.Password);
-                return _db.FirstOrDefault(m => m.UserName == model.UserName && m.Password == password);
+               return await _db.Include(m => m.Roles).Include(m=>m.DeviceList).FirstOrDefaultAsync(m => m.UserName == model.UserName && m.Password == password);
+                
 
             }catch(Exception ext)
             {

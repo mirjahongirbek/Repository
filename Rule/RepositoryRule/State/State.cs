@@ -1,16 +1,37 @@
 ﻿using RepositoryRule.Attributes;
+using RepositoryRule.Entity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-
+using System.Security.Claims;
 namespace RepositoryRule.State
 {
     public static class State
     {
         public static bool IsDevelopment { get; set; }
+        public static ClaimsIdentity CreateClaim<TKey, TRole, T>(this IAuthUser<TKey, TRole, T> user)
+            where TRole : class, IRoleUser<TKey>
+            where T : class, IUserDevice<TKey>
+        {
+            var userTip = user.GetType();
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
+                };
+            foreach(var role in user.Roles)
+            {
+                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
+
+            }
+            foreach (var field in userTip.GetProperties())
+            {
+                field.GetCustomAttribute<AuthAttribute>();
+            }
+            return null;
+        }
         public static List<string> CheckJwt(this object obj, ClaimsPrincipal user)
         {
             Type type = obj.GetType();
@@ -51,7 +72,7 @@ namespace RepositoryRule.State
             var type = obj.GetType();
             try
             {
-                
+
                 var attr = type.GetCustomAttribute<JohaAttribute>();
                 if (attr == null)
                 {
@@ -68,16 +89,16 @@ namespace RepositoryRule.State
                 Dictionary<string, object> result = new Dictionary<string, object>();
                 foreach (var i in attr.Fields)
                 {
-                   var prop = type.GetProperty(i);
+                    var prop = type.GetProperty(i);
                     var attribute = type.GetCustomAttribute<PropsAttribute>();
                     if (attribute == null)
                     {
-                        attribute = new PropsAttribute() { Name= type.Name };
+                        attribute = new PropsAttribute() { Name = type.Name };
                     }
                     if (string.IsNullOrEmpty(attribute.Name))
                     {
                         attribute.Name = type.GetProperty(i).Name;
-                    }                 
+                    }
                     if (prop == null) continue;
                     result.Add(attribute.Name, prop.GetValue(obj));
                 }

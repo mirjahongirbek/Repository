@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <UserSecretsId>b863f219-ba72-4457-946c-06451435ab45</UserSecretsId>
   </PropertyGroup>
 
 
@@ -11,10 +12,10 @@
     <PackageReference Include="AspectCore.Extensions.Autofac" Version="1.2.0" />
     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="1.2.0" />
     <PackageReference Include="Autofac" Version="4.9.1" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="MongoDB.Driver" Version="2.7.3" />
+    <PackageReference Include="MongoDB.Driver" Version="2.8.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ASP\GenericController\GenericController.csproj" />
+    <ProjectReference Include="..\EntityRepository\EntityRepository.csproj" />
     <ProjectReference Include="..\LoggingRepository\LoggingRepository.csproj" />
     <ProjectReference Include="..\MongoRepository\MongoRepository\MongoRepository.csproj" />
     <ProjectReference Include="..\ServiceList\ServiceList.csproj" />

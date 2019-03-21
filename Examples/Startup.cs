@@ -61,24 +61,29 @@ namespace Examples
             //services.AddScoped<IDataContext>(provider => provider.GetService<EntityDatabase>());
             //services.AddScoped<IEntityDataService, EntityDataService>();
 
-            services.AddScoped<ICompanyService, CompanyService>();
-            services.AddScoped<IProductService, ProductService>();
+            //services.AddScoped<ICompanyService, CompanyService>();
+            //services.AddScoped<IProductService, ProductService>();
 
-            services.AddScoped<IAuthUserService, AuthUserService>();
-            services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<IUserDeviceService, UserDeviceService>();
+           // services.AddScoped<IAuthUserService, AuthUserService>();
+           // services.AddScoped<IRoleService, RoleService>();
+           // services.AddScoped<IUserDeviceService, UserDeviceService>();
             //services.AddScoped<IRoleRepository<Entity.RoleUser, int>, EntityRepository.Repository.RoleRepository<Entity.RoleUser>>();
             //services.AddScoped<IUserDeviceRepository<Entity.UserDevice, Entity.RoleUser, int>, EntityRepository.Repository.DeviceRepository<Entity.UserDevice, Entity.RoleUser>>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
-           
+            containerBuilder.RegisterType<CompanyService>().As<ICompanyService>();
+            containerBuilder.RegisterType<ProductService>().As<IProductService>();
+            containerBuilder.RegisterType<AuthUserService>().As<IAuthUserService>();
+            containerBuilder.RegisterType<RoleService>().As<IRoleService>();
+            containerBuilder.RegisterType<UserDeviceService>().As< IUserDeviceService>();
+
             //containerBuilder.RegisterType<DataService>().As<IDataService>();
             //containerBuilder.RegisterType<SelectDataService>().As<ISelectDataService>();
             //containerBuilder.RegisterGeneric(typeof(MongoRepository<>))
             //    .As(typeof(IRepositoryBase<,>));
-           // containerBuilder.RegisterType<SeilogLogger>().As<ILoggerRepository>();
+            // containerBuilder.RegisterType<SeilogLogger>().As<ILoggerRepository>();
             //containerBuilder.RegisterType<MongoContext>().As<IMongoContext>();
 
             //containerBuilder.RegisterDynamicProxy(mbox => {

@@ -15,7 +15,7 @@ namespace RepositoryRule.Base
         Task<bool> DeviceExist(T model, IAuthUser<TKey,TRole ,T> user);
         Task Update(T model);
         Task Delete(TKey id);
-        Task<AuthResult> LoginAsync(T model, IAuthUser<TKey, TRole, T> user);
+        Task<AuthResult> LoginAsync(T model, IAuthUser<TKey, TRole, T> user, bool addIfNew);
         Task<T> Get(TKey id);
         Task<IEnumerable<T>> FindAll();
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> selector);

@@ -119,7 +119,6 @@ namespace EntityRepository.Repository
                 throw new Exception(ext.Message, ext);
             }
         }
-        
         public virtual async Task<T> GetByRefresh(string refreshToken)
         {
             try
@@ -194,31 +193,38 @@ namespace EntityRepository.Repository
             }
         }
         //protected virtual void 
-        private ClaimsIdentity GetIdentity(string username, List<TRole> rols)
+        private ClaimsIdentity GetIdentity(T model, IAuthUser<int, TRole, T> user)
         {
+
 
             var claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, username),
                 };
+            if(rols!=null)
             foreach (var i in rols)
             {
                 claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, i.Name));
             }
-
+            
             ClaimsIdentity claimsIdentity =
             new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);
             return claimsIdentity;
 
         }
-        //TODO change
-        public async Task<AuthResult> LoginAsync(T model, IAuthUser<int, TRole, T> user)
+        
+        public virtual async Task<AuthResult> LoginAsync(T model,  IAuthUser<int, TRole, T> user, bool addIfNew)
         {
             try
             {
+                var device = await _db.FirstOrDefaultAsync(m => m.UserId == model.UserId && m.DeviceId == model.DeviceId);
+                if(device== null && addIfNew)
+                {
+                    await Add(model);
+                }
+               var claims = GetIdentity(device,user);
 
-               var claims = GetIdentity(user.UserName, user.Roles.ToList());
                 var authResult = State.State.GetAuth(claims, model);
                 return authResult;
             }

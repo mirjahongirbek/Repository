@@ -106,7 +106,8 @@ namespace CacheRepository
         //change
         public T Find(Expression<Func<T, bool>> seletor)
         {
-           var s= seletor.Compile();
+            string expBody = ((LambdaExpression)seletor).Body.ToString();
+          //  var s= seletor.Compile();
             return null;
         }
 

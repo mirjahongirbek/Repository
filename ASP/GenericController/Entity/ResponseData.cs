@@ -2,8 +2,8 @@
 {
     public class ResponseData
     {
-        public dynamic result { get; set; }
-        public dynamic error { get; set; }
+        public object result { get; set; }
+        public object error { get; set; }
         public int status { get; set; }
     }
 

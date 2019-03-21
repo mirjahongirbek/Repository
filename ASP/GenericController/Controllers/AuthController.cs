@@ -7,6 +7,7 @@ using RepositoryRule.Entity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace GenericControllers.Controllers
 {
@@ -21,16 +22,21 @@ namespace GenericControllers.Controllers
         protected IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey> _auth;
         protected IUserDeviceRepository<IUserDevice, IUserRoles, TKey> _device;
         protected IRoleRepository<IUserRoles, TKey> _rols;
+        bool _checkDevice = false;
+        bool _addDeviceIfNew;
         public AuthController(
             IAuthRepository<IAuth, IUserRoles, IUserDevice, TKey> auth,
            IRoleRepository<IUserRoles, TKey> rols,
-             IUserDeviceRepository<IUserDevice, IUserRoles, TKey> device
+             IUserDeviceRepository<IUserDevice, IUserRoles, TKey> device,
+             bool checkDevice = false,
+             bool addDeviceIfNew = true
             )
         {
-
             _auth = auth;
             _rols = rols;
             _device = device;
+            _checkDevice = checkDevice;
+            _addDeviceIfNew = addDeviceIfNew;
         }
 
         public ResponseData GetProps(string name)
@@ -50,15 +56,34 @@ namespace GenericControllers.Controllers
             var auth = CreateAuth();
             auth.UserName = modal.UserName;
             auth.Password = modal.Password;
+            if(string.IsNullOrEmpty(modal.DeviceId)|| string.IsNullOrEmpty(modal.DeviceName))
+            {
+                return this.GetResponse();
+            }
+
             var user = await _auth.GetUser(auth);
+
+            var userDevice= user.DeviceList?.FirstOrDefault(m => m.DeviceId == modal.DeviceId);
+            var device = CreateDevice();
+            if (userDevice == null&& _addDeviceIfNew)
+            {
+                device.UserId = user.Id;
+                device.DeviceId = modal.DeviceId;
+                device.DeviceName = modal.DeviceName;
+            }
+            
+
+
             if (user == null)
             {
                 return this.GetResponse(user);
             }
-            var device = CreateDevice();
-            device.DeviceId = modal.DeviceId;
-            device.DeviceName = modal.DeviceName;
-            var result = await _device.LoginAsync(device, user);
+           // var device = CreateDevice();
+           // device.UserId = user.Id;
+           // device.DeviceId = modal.DeviceId;
+           // device.DeviceName = modal.DeviceName;
+            
+            var result = await _device.LoginAsync(device, user, true);
             return this.GetResponse(result);
         }
         [HttpPost]
