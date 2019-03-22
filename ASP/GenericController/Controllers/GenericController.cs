@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using RepositoryRule.Attributes;
 using RepositoryRule.LoggerRepository;
 using System.Diagnostics;
 using RepositoryRule.Base;
-using RepositoryRule.Entity;
 using RepositoryRule.State;
+using GenericController.State;
+using RState = RepositoryRule.State.State;
+
 
 namespace GenericControllers.Controllers
 {
@@ -27,8 +28,7 @@ namespace GenericControllers.Controllers
         IEnumerable<IControllerCommand<TKey>> _commands;
         public GenericController(List<Type> types,
             List<object> serviceList,
-            IEnumerable<IControllerCommand<TKey>> commands= null
-
+            IEnumerable<IControllerCommand<TKey>> commands = null
             )
         {
             if (commands != null)
@@ -63,51 +63,36 @@ namespace GenericControllers.Controllers
                 var type = _types[id];
                 if (type == null)
                 {
-                    return GetResponse(null, new { });
+                    return this.GetResponse();
                 }
                 Dictionary<string, PropsAttribute> result = new Dictionary<string, PropsAttribute>();
                 foreach (var i in type.GetProperties())
                 {
-                    var attribute = i.GetCustomAttribute<PropsAttribute>();
-
-                    if (attribute == null)
+                    var attr=i.GetProps();
+                    if(attr!= null)
                     {
-                        PropsAttribute attr = new PropsAttribute(i.Name);
                         result.Add(Char.ToLower(i.Name[0]) + i.Name.Substring(1), attr);
                     }
-                    else
-                    {
-                        result.Add(Char.ToLower(i.Name[0]) + i.Name.Substring(1), attribute);
-                    }
-
                 }
                 stop.Stop();
                 stop = null;
-                return GetResponse(result);
+                return this.GetResponse(result);
             }
             catch (Exception ext)
             {
-                stop.Stop();
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("GetProps", stop.ElapsedMilliseconds, id, ext, "GetProps", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, stop);
             }
-
         }
         [HttpGet]
         public ResponseData GetAllName()
         {
-
             try
             {
-                return GetResponse(_types?.Keys);
-
+                return this.GetResponse(_types?.Keys);
             }
             catch (Exception ext)
             {
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("GetAll Name", 0, null, ext, "GetAllName", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, Stopwatch.StartNew());
             }
 
         }
@@ -125,19 +110,16 @@ namespace GenericControllers.Controllers
                 var service = _service.FirstOrDefault(m => m.Key == name).Value;
                 if (service == null)
                 {
-                    GetResponse();
+                    this.GetResponse();
                 }
                 var type = service.GetType();
                 var result = type.InvokeMember("Get", bindings, null, service, new object[] { id, 108, "GetById" });
                 stop.Stop();
-                return GetResponse(result);
+                return this.GetResponse(result);
             }
             catch (Exception ext)
             {
-                stop.Stop();
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("Get by Id", stop.ElapsedMilliseconds, new { Id = id, name = name }, ext, "GetById", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, stop);
             }
         }
         [HttpGet]
@@ -148,25 +130,21 @@ namespace GenericControllers.Controllers
             {
                 if (string.IsNullOrEmpty(id))
                 {
-                    return GetResponse();
+                    return this.GetResponse();
                 }
                 var type = _types.FirstOrDefault(m => m.Key == id).Value;
                 if (type == null)
                 {
-                    return GetResponse(status: 403);
+                    return this.GetResponse(status: 403);
                 }
                 var service = _service[id];
-
                 var result = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { 0, "GetAllCount" });
                 stop.Stop();
-                return GetResponse(result);
+                return this.GetResponse(result);
             }
             catch (Exception ext)
             {
-                stop.Stop();
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("GetAllCount", stop.ElapsedMilliseconds, id, ext, "GetAllCount", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, stop);
             }
         }
         [HttpGet]
@@ -179,19 +157,17 @@ namespace GenericControllers.Controllers
                 var service = _service.FirstOrDefault(m => m.Key == id).Value;
                 if (service == null)
                 {
-                    return GetResponse();
+                    return this.GetResponse();
                 }
                 var type = service.GetType();
                 var result = type.InvokeMember("FindAll", bindings, null, service, null);
                 stop.Stop();
-                return GetResponse(result);
+                return this.GetResponse(result);
             }
             catch (Exception ext)
             {
-                stop.Stop();
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("GetAll", stop.ElapsedMilliseconds, id, ext, "GetAll", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, stop);
+                
             }
         }
         #endregion
@@ -205,42 +181,33 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return GetResponse();
+                    return this.GetResponse(); // TODO change
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)
                 {
-                    return GetResponse();
+                    return this.GetResponse(); //TODO change
                 }
-                var result = JsonConvert.DeserializeObject(model.data.ToString(), type,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore
-                            });
+                var result = model.data.SerializeMe(type);
                 var service = _service[model.name];
-                var errlist= result.CheckJwt(User);
+                var errlist = result.CheckJwt(User);
+
                 if (errlist.Count > 0)
                 {
-                    return GetResponse(errlist);
+                    return this.GetResponse(errlist);
                 }
 
-                #region
                 var command = _commands.FirstOrDefault(m => m.Name == model.name);
-                await command.Add(result,User);
-                #endregion
+                await command.Add(result, User);
                 service.GetType().GetMethod("Add").Invoke(service, new object[] { result, 152, "PostData" });
                 stop.Stop();
-                return GetResponse();
+                return this.GetResponse();
             }
             catch (Exception ext)
             {
-                stop.Stop();
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("Add Data", stop.ElapsedMilliseconds, model, ext, "AddData", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, stop, model);
             }
         }
-
         [HttpPost]
         public virtual async Task<ResponseData> DataWithCount([FromBody] Query model)
         {
@@ -249,12 +216,12 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return GetResponse();
+                    return this.GetResponse();
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)
                 {
-                    return GetResponse();
+                    return this.GetResponse();
                 }
                 var service = _service[model.name];
                 PostResponse result = new PostResponse();
@@ -266,17 +233,15 @@ namespace GenericControllers.Controllers
                 else
                 {
                     result.items = service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.offset, model.limit, });
+                    RState.ListDataParse(result.items, type);
                     result.count = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { 0, "PostsData" });
                 }
                 stop.Stop();
-                return GetResponse(result);
+                return this.GetResponse(result);
             }
             catch (Exception ext)
             {
-                stop.Stop();
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("DataWithCount", stop.ElapsedMilliseconds, model, ext, "DataWithCount", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, stop);
             }
         }
         [HttpPost]
@@ -287,12 +252,12 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return GetResponse();
+                    return this.GetResponse();
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)
                 {
-                    return GetResponse();
+                    return this.GetResponse();
                 }
                 var service = _service[model.name];
                 object result;
@@ -307,14 +272,15 @@ namespace GenericControllers.Controllers
 
                 }
                 stop.Stop();
-                return GetResponse(result);
+                return this.GetResponse(result);
             }
             catch (Exception ext)
             {
-                stop.Stop();
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("PostData", stop.ElapsedMilliseconds, model, ext, "PostData", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, stop);
+                //stop.Stop();
+                //string code = Guid.NewGuid().ToString();
+                //_logger?.CatchError("PostData", stop.ElapsedMilliseconds, model, ext, "PostData", code);
+                //return this.GetResponse(status: 400, code: code);
             }
         }
 
@@ -329,56 +295,48 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return GetResponse();
+                    return this.GetResponse();
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)
                 {
-                    return GetResponse();
+                    return this.GetResponse();
                 }
-                var result = JsonConvert.DeserializeObject(model.data, type);
+                var result = model.data.SerializeMe(type);
                 var service = _service[model.name];
                 service.GetType().GetMethod("Update").Invoke(service, new object[] { result, 158, "GenericUpdateData" });
                 stop.Stop();
-                return GetResponse(new SuccesResponse(), null);
+                return this.GetResponse(new SuccesResponse());
 
             }
             catch (Exception ext)
             {
-                stop.Stop();
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError("UpdateData", stop.ElapsedMilliseconds, model, ext, "UpdateData", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, stop);
             }
         }
         #endregion
 
         #region Delete Requests
         [HttpDelete]
-        public virtual async Task<ResponseData> DeleteData(int id, string name)
+        public virtual async Task<ResponseData> DeleteData(TKey id, string name)
         {
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
-                return GetResponse();
+
+                return this.GetResponse();
             }
             catch (Exception ext)
             {
-                string code = Guid.NewGuid().ToString();
-                _logger?.CatchError(code, stop.ElapsedMilliseconds, ext, ext, "DeleteData", code);
-                return GetResponse(status: 400, code: code);
+                return this.ExceptionResult(ext, stop);
+               
             }
         }
         #endregion
-        protected virtual ResponseData GetResponse(object data = null, object err = null, int status = 200, string code = null)
-        {
-            if (err != null)
-            {
-                return new ResponseData();
-            }
-
-            return new ResponseData() { result = data };
-        }
+                
     }
 
 }
+//string code = Guid.NewGuid().ToString();
+//_logger?.CatchError(code, stop.ElapsedMilliseconds, ext, ext, "DeleteData", code);
+//return this.GetResponse(status: 400, code: code);

@@ -2,22 +2,16 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Entity;
-using EntityRepository.Context;
-using Examples.Db;
-using LoggingRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MongoRepository;
-using MongoRepository.Context;
-using RepositoryRule.Base;
-using RepositoryRule.LoggerRepository;
-using Serilog;
+using Microsoft.IdentityModel.Tokens;
+using RepositoryRule.Entity;
 using ServiceList;
 using System;
 
@@ -41,8 +35,32 @@ namespace Examples
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
+                
             });
-           // services.AddSingleton<IDataService, DataService>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                     .AddJwtBearer(options =>
+                     {
+                         options.RequireHttpsMetadata = false;
+                         options.TokenValidationParameters = new TokenValidationParameters
+                         {
+                            // укзывает, будет ли валидироваться издатель при валидации токена
+                            ValidateIssuer = true,
+                            // строка, представляющая издателя
+                            ValidIssuer = AuthOption.ISSUER,
+
+                            // будет ли валидироваться потребитель токена
+                            ValidateAudience = true,
+                            // установка потребителя токена
+                            ValidAudience = AuthOption.AUDINECE,
+                            // будет ли валидироваться время существования
+                            ValidateLifetime = true,
+                            // установка ключа безопасности
+                            IssuerSigningKey = EntityRepository.State.State.GetSecurityKey(),
+                         // валидация ключа безопасности
+                         ValidateIssuerSigningKey = true,
+                         };
+                     });
+            // services.AddSingleton<IDataService, DataService>();
             //services.AddSingleton<IMongoContext, MongoContext>();
             //var log = new LoggerConfiguration().WriteTo.Seq("http://localhost:5341").WriteTo.Console()
             //.CreateLogger();
@@ -114,7 +132,7 @@ namespace Examples
            // app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+            app.UseAuthentication();
             app.UseCors(builder => builder
                 .WithOrigins("*")
                 .AllowAnyMethod()

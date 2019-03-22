@@ -1,40 +1,112 @@
 ﻿using GenericController.Entity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using RepositoryRule.Attributes;
+using RepositoryRule.Entity;
 using RepositoryRule.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using System.Security.Claims;
 
 namespace GenericController.State
 {
     public static class State
     {
-       public static bool HasMethod(this object objectToCheck, string methodName)
+        public static bool HasMethod(this object objectToCheck, string methodName)
         {
             var type = objectToCheck.GetType();
             return type.GetMethod(methodName) != null;
         }
-        public static ResponseData GetResponse(this ControllerBase cBase, 
-            object response= null,
-            int status=200,
-            object err= null)
+        public static ResponseData GetResponse(this ControllerBase cBase,
+            object result = null,
+            int status = 200,
+            object err = null)
         {
-            if(err!= null)
+            if (err != null)
             {
-                
+
                 cBase.Response.StatusCode = status;
-                return new ResponseData {
-                    error = {
+                return new ResponseData
+                {
+                    error = new
+                    {
                         err
                     }
                 };
             }
 
 
-            if (response is ValidationExeption)
+            if (result is ValidationExeption)
             {
 
             }
 
             cBase.HttpContext.Response.StatusCode = status;
-            return new ResponseData();
+            return new ResponseData() { result = result };
+        }
+        public static ClaimsIdentity CreateClaim<TKey, TRole, T>(this IAuthUser<TKey, TRole, T> user, string str)
+           where TRole : class, IRoleUser<TKey>
+           where T : class, IUserDevice<TKey>
+        {
+            var userTip = user.GetType();
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
+                };
+            foreach (var role in user.Roles)
+            {
+                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
+
+            }
+
+            foreach (var field in userTip.GetProperties())
+            {
+
+                var attr = field.GetCustomAttribute<AuthAttribute>();
+                if (field.Name == "Id" && attr == null)
+                {
+                    claims.Add(new Claim(field.Name, user.Id.ToString()));
+                }
+                if (attr == null) continue;
+                var value = field.GetValue(user).ToString();
+                claims.Add(new Claim(attr.Name ?? field.Name, value));
+            }
+            if (claims.Count == 0)
+            {
+                return null;
+            }
+            ClaimsIdentity claimsIdentity =
+            new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
+                ClaimsIdentity.DefaultRoleClaimType);
+            return claimsIdentity;
+
+        }
+
+        public static object SerializeMe(this string data, Type type)
+        {
+            return JsonConvert.DeserializeObject(data, type,
+                           new JsonSerializerSettings
+                           {
+                               NullValueHandling = NullValueHandling.Ignore
+                           });
+        }
+        public static ResponseData ExceptionResult(this ControllerBase control,
+            Exception ext,
+            Stopwatch stop,
+            
+            object model = null)
+        {
+            stop.Stop();
+            if (RepositoryRule.State.State.IsDevelopment)
+            {
+                return control.GetResponse();
+            }
+            string code = Guid.NewGuid().ToString();
+            
+            return control.GetResponse();
+
         }
     }
 }

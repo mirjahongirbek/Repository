@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryRule.Base;
+using RepositoryRule.CacheRepository;
 using RepositoryRule.Entity;
 using System;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace EntityRepository.Repository
         where TRole: class, IRoleUser<int>
         where TDevice:class, IUserDevice<int>
     {
+        ICacheRepository<T> _cache;
         protected DbSet<T> _db;
         DbContext _context;
         public AuthRepository(IDataContext context)
@@ -22,13 +24,33 @@ namespace EntityRepository.Repository
             _db = context.DataContext.Set<T>();
             _context = context.DataContext;
         }
+        public AuthRepository(IDataContext context, ICacheRepository<T> cache) : this(context)
+        {
+            _cache = cache;
+        }
         //TODO finish
+        private T GetByCache(int id)
+        {
+          return  _cache?.Find(id.ToString());
+        }
         public virtual async  Task Delete(int id)
         {
+            try
+            {
+                var device=  GetByCache(id);
+                if(device== null)
+                 device = _db.Find(id);
+                if(device!=null)
+                _db.Remove(device);
+            }catch(Exception ext)
+            {
+                throw new Exception(ext.Message, ext);
+            }
           
         }
         public virtual async Task<bool> IsLoginedAsync(T model)
         {
+
            var result= _db.FirstOrDefault(m => m.UserName == model.UserName || m.Email == model.UserName);
             if(result== null)
             {
@@ -36,9 +58,11 @@ namespace EntityRepository.Repository
             }
             return false;
         }
-        public virtual Task Logout()
+        public virtual Task Logout(string token)
         {
-            throw new System.NotImplementedException();
+            var access= token.Split(" ")[1];
+            
+            return null;
         }
         public virtual Task<AuthResult> RegisterAsync()
         {
@@ -81,69 +105,27 @@ namespace EntityRepository.Repository
         {
            return _db.FirstOrDefault(m => m.UserName == model || m.Email == model);
         }
-
+       
         public async Task<bool> RegisterAsync(T model)
         {
             await _db.AddAsync(model);
             _context.SaveChanges();
             return true;
         }
+
+        public async Task<T> GetMe(string id)
+        {
+            try
+            {
+                var UserId = Convert.ToInt32(id);
+                var user= await _db.Include(m=>m.Roles).FirstOrDefaultAsync(m=>m.Id==UserId);
+                user.DeviceList = null;
+                return user;
+            }catch(Exception ext)
+            {
+                throw new Exception(ext.Message, ext);
+            }
+           
+        }
     }
 }
-/*
-  [HttpPost("/token")]
-        public async Task Token()
-        {
-            var username = Request.Form["username"];
-            var password = Request.Form["password"];
- 
-            var identity = GetIdentity(username, password);
-            if (identity == null)
-            {
-                Response.StatusCode = 400;
-                await Response.WriteAsync("Invalid username or password.");
-                return;
-            }
- 
-            var now = DateTime.UtcNow;
-            // создаем JWT-токен
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-             
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = identity.Name
-            };
- 
-            // сериализация ответа
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
-        }
- 
-        private ClaimsIdentity GetIdentity(string username, string password)
-        {
-            Person person = people.FirstOrDefault(x => x.Login == username && x.Password == password);
-            if (person != null)
-            {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
-                };
-                ClaimsIdentity claimsIdentity =
-                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                    ClaimsIdentity.DefaultRoleClaimType);
-                return claimsIdentity;
-            }
- 
-            // если пользователя не найдено
-            return null;
-        }
-     */

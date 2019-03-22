@@ -8,6 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using RepositoryRule.State;
+using RepositoryRule.Attributes;
+using System.Reflection;
+using System.Diagnostics;
 
 namespace GenericControllers.Controllers
 {
@@ -39,16 +43,48 @@ namespace GenericControllers.Controllers
             _addDeviceIfNew = addDeviceIfNew;
         }
 
-        public ResponseData GetProps(string name)
+        [HttpGet]
+        public ResponseData GetMe()
         {
+            var idtip  =CreateAuth().GetType().GetProperty("Id");
+            //var idtip = CreateAuth().Id.GetType();
+            var auth = idtip.GetCustomAttribute<AuthAttribute>();
+            var name = "";
+            name = auth?.Name ?? idtip.Name;
+            name = User.FindFirst(name).Value;
+            return this.GetResponse(_auth.GetMe(name));
+        }
+        
+        [HttpGet]
+        public ResponseData GetProps(int id)
+        {
+            Stopwatch stop = Stopwatch.StartNew();
             try
             {
-
-            }catch(Exception ext)
-            {
-
+                var type = _types[id];
+                if (type == null)
+                {
+                    return this.GetResponse();
+                }
+                Dictionary<string, PropsAttribute> result = new Dictionary<string, PropsAttribute>();
+                foreach (var i in type.GetProperties())
+                {
+                    var attr = i.GetProps();
+                    if (attr != null)
+                    {
+                        result.Add(Char.ToLower(i.Name[0]) + i.Name.Substring(1), attr);
+                    }
+                }
+                stop.Stop();
+                stop = null;
+                return this.GetResponse(result);
             }
-          return   this.GetResponse();
+            catch (Exception ext)
+            {
+                return ExceptionResult(ext, stop);
+            }
+
+           
         }
         [HttpPost]
         public virtual async Task<ResponseData> Login([FromBody]LoginViewModal modal)
@@ -56,34 +92,37 @@ namespace GenericControllers.Controllers
             var auth = CreateAuth();
             auth.UserName = modal.UserName;
             auth.Password = modal.Password;
-            if(string.IsNullOrEmpty(modal.DeviceId)|| string.IsNullOrEmpty(modal.DeviceName))
+            var userAgent = Request.Headers["User-Agent"];
+            if (string.IsNullOrEmpty(userAgent))
+            {
+                this.GetResponse(err: new { Message = "User Agent not Exsist" });
+            }
+
+            if (string.IsNullOrEmpty(modal.DeviceId))
             {
                 return this.GetResponse();
             }
-
             var user = await _auth.GetUser(auth);
-
-            var userDevice= user.DeviceList?.FirstOrDefault(m => m.DeviceId == modal.DeviceId);
-            var device = CreateDevice();
-            if (userDevice == null&& _addDeviceIfNew)
-            {
-                device.UserId = user.Id;
-                device.DeviceId = modal.DeviceId;
-                device.DeviceName = modal.DeviceName;
-            }
-            
-
-
             if (user == null)
             {
-                return this.GetResponse(user);
+                return this.GetResponse();
             }
-           // var device = CreateDevice();
-           // device.UserId = user.Id;
-           // device.DeviceId = modal.DeviceId;
-           // device.DeviceName = modal.DeviceName;
-            
-            var result = await _device.LoginAsync(device, user, true);
+            var userDevice = user.DeviceList?.FirstOrDefault(m => m.DeviceId == modal.DeviceId);
+
+            if (userDevice == null && _addDeviceIfNew)
+            {
+                userDevice = CreateDevice();
+                userDevice.UserId = user.Id;
+                userDevice.DeviceId = modal.DeviceId;
+                userDevice.DeviceName = Request.Headers["User-Agent"];
+                ;
+                await _device.Add(userDevice);
+            }
+            var getClaim = user.CreateClaim("sdcsd");
+            var result = EntityRepository.State.State.GetAuth(getClaim, userDevice);
+            userDevice.AccessToken = result.AccessToken;
+            userDevice.RefreshToken = result.RefreshToken;
+            await _device.Update(userDevice);
             return this.GetResponse(result);
         }
         [HttpPost]
@@ -100,7 +139,7 @@ namespace GenericControllers.Controllers
                 {
                     return this.GetResponse();
                 }
-           return     this.GetResponse(true);
+                return this.GetResponse(true);
             }
             catch (Exception ext)
             {
@@ -109,6 +148,7 @@ namespace GenericControllers.Controllers
         }
         public ResponseData Lagout()
         {
+            _device.Logout(Request.Headers["Authorization"]);
             return this.GetResponse();
         }
         #region

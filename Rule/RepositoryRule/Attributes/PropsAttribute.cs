@@ -23,6 +23,8 @@ namespace RepositoryRule.Attributes
         public string UserReference { get; set; }
         public short LangId { get; set; }
         public FontType[] Types { get; set; }
+        public int MaxLength { get; set; }
+        public int MinLength { get; set; }
         #endregion 
         #region Default Constructors
         public PropsAttribute(

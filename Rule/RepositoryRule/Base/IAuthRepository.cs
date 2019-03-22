@@ -19,9 +19,9 @@ namespace RepositoryRule.Base
         Task<T> GetUser(T model);
         Task<bool> IsLoginedAsync(T model);
         Task<bool> RegisterAsync(T model);
-        Task Logout();
+        Task Logout(string access);
         Task Delete(TKey id);
-
+        Task<T> GetMe(string id);
     }
 
 }

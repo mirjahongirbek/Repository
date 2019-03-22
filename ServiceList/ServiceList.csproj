@@ -8,7 +8,6 @@
     <ProjectReference Include="..\EntityRepository\EntityRepository.csproj" />
     <ProjectReference Include="..\Entity\Entity.csproj" />
     <ProjectReference Include="..\LoggingRepository\LoggingRepository.csproj" />
-    <ProjectReference Include="..\MongoRepository\MongoRepository\MongoRepository.csproj" />
     <ProjectReference Include="..\Rule\RepositoryRule\RepositoryRule.csproj" />
   </ItemGroup>
 

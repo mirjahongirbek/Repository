@@ -11,14 +11,15 @@ using RepositoryRule.CacheRepository;
 using RepositoryRule.Entity;
 namespace EntityRepository.Repository
 {
-    public class DeviceRepository<T, TRole> : IUserDeviceRepository<T,TRole, int>
-        where T :class, IUserDevice<int>
-        where TRole:class,IRoleUser<int>
+    public class DeviceRepository<T, TRole> : IUserDeviceRepository<T, TRole, int>
+        where T : class, IUserDevice<int>
+        where TRole : class, IRoleUser<int>
 
     {
         DbSet<T> _db;
         DbContext _context;
         ICacheRepository<T> _cache;
+
         public DeviceRepository(IDataContext context)
         {
             _db = context.DataContext.Set<T>();
@@ -28,11 +29,12 @@ namespace EntityRepository.Repository
         {
             _cache = cache;
         }
+
         public virtual async Task Add(T model)
         {
             try
             {
-                _cache.Add(model.Id.ToString(), model);
+                _cache?.Add(model.Id.ToString(), model);
                 _db.Add(model);
                 Save();
             }
@@ -50,10 +52,15 @@ namespace EntityRepository.Repository
         {
             try
             {
-                var model = _cache.Find(id.ToString());
+                var model = _cache?.Find(id.ToString());
+                
                 if (model == null)
                 {
                     model = await Get(id);
+                }
+                else
+                {
+                    _cache?.Delete(id.ToString());
                 }
                 if (model != null)
                     _db.Remove(model);
@@ -68,7 +75,12 @@ namespace EntityRepository.Repository
         {
             try
             {
-                var device = await _db.FirstOrDefaultAsync(m => m.DeviceId == model.DeviceId && m.UserId == user.Id);
+               var device= _cache?.FindFirst(m=>m.DeviceId== model.DeviceId&& m.UserId== user.Id);
+                if (device!= null)
+                {
+                    return true;
+                }
+                device = await _db.FirstOrDefaultAsync(m => m.DeviceId == model.DeviceId && m.UserId == user.Id);
                 if (device != null)
                 {
                     return true;
@@ -80,25 +92,25 @@ namespace EntityRepository.Repository
             }
             catch (Exception ext)
             {
-                throw new Exception("", ext);
+                throw new Exception(ext.Message, ext);
             }
         }
         public virtual async Task<T> Get(int id)
         {
             try
             {
-                return await _db.FirstOrDefaultAsync(m => m.Id == id);
-
+               return _cache?.Find(id.ToString())?? await _db.FirstOrDefaultAsync(m => m.Id == id);
             }
             catch (Exception ext)
             {
-                throw new Exception("", ext);
+                throw new Exception(ext.Message, ext);
             }
         }
         public virtual async Task<IEnumerable<T>> FindAll()
         {
             try
             {
+
                 return await _db.ToListAsync();
 
             }
@@ -123,44 +135,34 @@ namespace EntityRepository.Repository
         {
             try
             {
-                var model = _cache.FindFirst(m => m.RefreshToken == refreshToken);
-                if (model != null)
-                {
-                    return model;
-                }
-                return _db.FirstOrDefault(m => m.RefreshToken == refreshToken);
+                return _cache.FindFirst(m=>m.RefreshToken== refreshToken)??await _db.FirstOrDefaultAsync(m => m.RefreshToken == refreshToken);
             }
             catch (Exception ext)
             {
                 throw new Exception(ext.Message, ext);
             }
         }
-        public virtual async Task<AuthResult> UpdateToken(T model, IAuthUser<int, TRole, T> user)
-        {
-            try
-            {
-                if (model == null || model.Id == 0)
-                {
-                    throw new System.DivideByZeroException();
-                }
+        //public virtual async Task<AuthResult> UpdateToken(T model, IAuthUser<int, TRole, T> user)
+        //{
+        //    try
+        //    {
+        //        if (model == null || model.Id == 0)
+        //        {
+        //            throw new System.ArgumentNullException();
+        //        }
 
-                var claims = GetIdentity(user.UserName, user.Roles.ToList());
-                var authResult = State.State.GetAuth(claims, model);
-                model.AccessToken = authResult.AcessToken;
-                model.RefreshToken = authResult.RefreshToken;
-                await Update(model);
-                return authResult;
-            }
-            catch (Exception ext)
-            {
-                throw new Exception(ext.Message, ext);
-            }
-        }
+        //        return null;
+        //    }
+        //    catch (Exception ext)
+        //    {
+        //        throw new Exception(ext.Message, ext);
+        //    }
+        //}
         public virtual async Task<bool> Logout(string token)
         {
             try
             {
-                var model = _cache.FindFirst(m => m.RefreshToken == token);
+                var model = _cache?.FindFirst(m => m.AccessToken == token);
                 if (model == null)
                 {
                     model = _db.FirstOrDefault(m => m.AccessToken == token);
@@ -184,56 +186,68 @@ namespace EntityRepository.Repository
         {
             try
             {
-
+                _cache?.Update(model);
+                _db.Update(model);
                 Save();
-            }
-            catch (Exception ext)
-            {
-                throw new Exception("", ext);
-            }
-        }
-        //protected virtual void 
-        private ClaimsIdentity GetIdentity(T model, IAuthUser<int, TRole, T> user)
-        {
-
-
-            var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, username),
-                };
-            if(rols!=null)
-            foreach (var i in rols)
-            {
-                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, i.Name));
-            }
-            
-            ClaimsIdentity claimsIdentity =
-            new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                ClaimsIdentity.DefaultRoleClaimType);
-            return claimsIdentity;
-
-        }
-        
-        public virtual async Task<AuthResult> LoginAsync(T model,  IAuthUser<int, TRole, T> user, bool addIfNew)
-        {
-            try
-            {
-                var device = await _db.FirstOrDefaultAsync(m => m.UserId == model.UserId && m.DeviceId == model.DeviceId);
-                if(device== null && addIfNew)
-                {
-                    await Add(model);
-                }
-               var claims = GetIdentity(device,user);
-
-                var authResult = State.State.GetAuth(claims, model);
-                return authResult;
             }
             catch (Exception ext)
             {
                 throw new Exception(ext.Message, ext);
             }
         }
+        #region
+        //protected virtual void 
+        //private ClaimsIdentity GetIdentity(T model, IAuthUser<int, TRole, T> user)
+        //{
+        //    var claims = new List<Claim>
+        //        {
+        //            new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
+        //        };
+        //    if (user.Roles != null)
+        //        foreach (var i in user.Roles)
+        //        {
+        //            claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, i.Name));
+        //        }
 
-     
+        //    ClaimsIdentity claimsIdentity =
+        //    new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
+        //        ClaimsIdentity.DefaultRoleClaimType);
+        //    return claimsIdentity;
+
+        //}
+
+        //public virtual async Task<AuthResult> LoginAsync(T model, IAuthUser<int, TRole, T> user, bool addIfNew)
+        //{
+        //    try
+        //    {
+        //        var device = await _db.FirstOrDefaultAsync(m => m.UserId == model.UserId && m.DeviceId == model.DeviceId);
+        //        if (device == null && addIfNew)
+        //        {
+        //            await Add(model);
+        //        }
+        //        var claims = GetIdentity(device, user);
+
+        //        var authResult = State.State.GetAuth(claims, model);
+        //        return authResult;
+        //    }
+        //    catch (Exception ext)
+        //    {
+        //        throw new Exception(ext.Message, ext);
+        //    }
+        //}
+        #endregion
+            //Finish
+        public Task<IEnumerable<T>> GetByUserId(int id)
+        {
+            try
+            {
+                
+                return Task.FromResult<IEnumerable<T>>(_db.Where(m => m.UserId == id));
+            }
+            catch (Exception ext)
+            {
+                throw new Exception(ext.Message, ext);
+            }
+        }
     }
 }
