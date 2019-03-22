@@ -61,7 +61,14 @@ namespace GenericControllers.Controllers
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
-                var type = _types[id];
+                Type type;
+                switch (id)
+                {
+                    case 1: {type = typeof(IAuth);} break;
+                    case 2: { type = typeof(IUserRoles);}break;
+                    case 3: { type = typeof(IUserDevice); }break;
+                    default: { type = null; } break;
+                }
                 if (type == null)
                 {
                     return this.GetResponse();
@@ -81,7 +88,7 @@ namespace GenericControllers.Controllers
             }
             catch (Exception ext)
             {
-                return ExceptionResult(ext, stop);
+                return this.ExceptionResult(ext, stop);
             }
 
            
@@ -89,45 +96,52 @@ namespace GenericControllers.Controllers
         [HttpPost]
         public virtual async Task<ResponseData> Login([FromBody]LoginViewModal modal)
         {
-            var auth = CreateAuth();
-            auth.UserName = modal.UserName;
-            auth.Password = modal.Password;
-            var userAgent = Request.Headers["User-Agent"];
-            if (string.IsNullOrEmpty(userAgent))
+            Stopwatch stop = Stopwatch.StartNew();
+            try
             {
-                this.GetResponse(err: new { Message = "User Agent not Exsist" });
+                var auth = CreateAuth();
+                auth.UserName = modal.UserName;
+                auth.Password = modal.Password;
+                var userAgent = Request.Headers["User-Agent"];
+                if (string.IsNullOrEmpty(userAgent))
+                {
+                    this.GetResponse(err: new { Message = "User Agent not Exsist" });
+                }
+                if (string.IsNullOrEmpty(modal.DeviceId))
+                {
+                    return this.GetResponse();
+                }
+                var user = await _auth.GetUser(auth);
+                if (user == null)
+                {
+                    return this.GetResponse();
+                }
+                var userDevice = user.DeviceList?.FirstOrDefault(m => m.DeviceId == modal.DeviceId);
+                if (userDevice == null && _addDeviceIfNew)
+                {
+                    userDevice = CreateDevice();
+                    userDevice.UserId = user.Id;
+                    userDevice.DeviceId = modal.DeviceId;
+                    userDevice.DeviceName = userAgent;
+                    await _device.Add(userDevice);
+                }
+                var getClaim = user.CreateClaim();
+                var result = EntityRepository.State.State.GetAuth(getClaim, userDevice);
+                userDevice.AccessToken = result.AccessToken;
+                userDevice.RefreshToken = result.RefreshToken;
+                await _device.Update(userDevice);
+                return this.GetResponse(result);
             }
-
-            if (string.IsNullOrEmpty(modal.DeviceId))
+            catch(Exception ext)
             {
-                return this.GetResponse();
+                return this.ExceptionResult(ext, stop);
             }
-            var user = await _auth.GetUser(auth);
-            if (user == null)
-            {
-                return this.GetResponse();
-            }
-            var userDevice = user.DeviceList?.FirstOrDefault(m => m.DeviceId == modal.DeviceId);
-
-            if (userDevice == null && _addDeviceIfNew)
-            {
-                userDevice = CreateDevice();
-                userDevice.UserId = user.Id;
-                userDevice.DeviceId = modal.DeviceId;
-                userDevice.DeviceName = Request.Headers["User-Agent"];
-                ;
-                await _device.Add(userDevice);
-            }
-            var getClaim = user.CreateClaim("sdcsd");
-            var result = EntityRepository.State.State.GetAuth(getClaim, userDevice);
-            userDevice.AccessToken = result.AccessToken;
-            userDevice.RefreshToken = result.RefreshToken;
-            await _device.Update(userDevice);
-            return this.GetResponse(result);
+          
         }
         [HttpPost]
         public virtual async Task<ResponseData> Register([FromBody] IAuth model)
         {
+            Stopwatch stop = Stopwatch.StartNew();
             try
             {
                 var user = await _auth.GetLoginOrEmail(model.UserName) ?? await _auth.GetLoginOrEmail(model.Email);
@@ -139,11 +153,12 @@ namespace GenericControllers.Controllers
                 {
                     return this.GetResponse();
                 }
+                stop.Stop();
                 return this.GetResponse(true);
             }
             catch (Exception ext)
             {
-                return this.GetResponse(ext);
+                return this.ExceptionResult(ext, stop);
             }
         }
         public ResponseData Lagout()
@@ -151,7 +166,7 @@ namespace GenericControllers.Controllers
             _device.Logout(Request.Headers["Authorization"]);
             return this.GetResponse();
         }
-        #region
+        #region Private Methods
         private IAuth CreateAuth()
         {
             return (IAuth)Activator.CreateInstance(typeof(IAuth));

@@ -18,6 +18,8 @@ namespace GenericControllers.Controllers
 {
     //Add Next Log Service
     //Add next GetType changes
+    //modalviewModal
+    //anguage
     public class GenericController<TKey> : ControllerBase
     {
 

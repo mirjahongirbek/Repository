@@ -46,44 +46,6 @@ namespace GenericController.State
             cBase.HttpContext.Response.StatusCode = status;
             return new ResponseData() { result = result };
         }
-        public static ClaimsIdentity CreateClaim<TKey, TRole, T>(this IAuthUser<TKey, TRole, T> user, string str)
-           where TRole : class, IRoleUser<TKey>
-           where T : class, IUserDevice<TKey>
-        {
-            var userTip = user.GetType();
-            var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
-                };
-            foreach (var role in user.Roles)
-            {
-                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
-
-            }
-
-            foreach (var field in userTip.GetProperties())
-            {
-
-                var attr = field.GetCustomAttribute<AuthAttribute>();
-                if (field.Name == "Id" && attr == null)
-                {
-                    claims.Add(new Claim(field.Name, user.Id.ToString()));
-                }
-                if (attr == null) continue;
-                var value = field.GetValue(user).ToString();
-                claims.Add(new Claim(attr.Name ?? field.Name, value));
-            }
-            if (claims.Count == 0)
-            {
-                return null;
-            }
-            ClaimsIdentity claimsIdentity =
-            new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                ClaimsIdentity.DefaultRoleClaimType);
-            return claimsIdentity;
-
-        }
-
         public static object SerializeMe(this string data, Type type)
         {
             return JsonConvert.DeserializeObject(data, type,
@@ -95,7 +57,7 @@ namespace GenericController.State
         public static ResponseData ExceptionResult(this ControllerBase control,
             Exception ext,
             Stopwatch stop,
-            
+
             object model = null)
         {
             stop.Stop();
@@ -104,7 +66,7 @@ namespace GenericController.State
                 return control.GetResponse();
             }
             string code = Guid.NewGuid().ToString();
-            
+
             return control.GetResponse();
 
         }
