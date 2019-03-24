@@ -25,26 +25,33 @@ namespace RepositoryRule.Attributes
         public FontType[] Types { get; set; }
         public int MaxLength { get; set; }
         public int MinLength { get; set; }
-        #endregion 
+        #endregion
         #region Default Constructors
+
         public PropsAttribute(
-            string name = null,
+            string name,
+            string label = null,
             string jwtKey= null,
             string foreignTable = null,
             bool getAllForeign = false,
-            bool hideAdd =false,
-            bool hideshow = false,
+            bool showAdd =true,
+            bool isShow = true,
             short langId = 0,
             string regular = null,
             string UserReference = null)
         {
+            Name = name;
+            Label = name;
             ForeignTable = foreignTable;
             LangId = langId;
             Regular = regular;
-            Name = name;
-           ShowAdd = hideAdd;
+            if (!string.IsNullOrEmpty(label))
+            {
+                Label = label;
+            }
+            ShowAdd = showAdd;
             JWTKey = jwtKey;
-            Show = hideshow;
+            Show = isShow;
         }
        public PropsAttribute(string DefaultLabel, 
               FontType font,
@@ -55,8 +62,8 @@ namespace RepositoryRule.Attributes
             string url=null,
             string reg=null,
             bool getAllForeign= false, 
-            bool hideAdd = false,
-            bool hideshow = false,
+            bool showAdd = true,
+            bool isShow = true,
             short langId=0,
             string regular=null,
             string UserReference=null
@@ -72,8 +79,8 @@ namespace RepositoryRule.Attributes
             Types = types;
             JWTKey = jwtKey;
             
-            ShowAdd = hideAdd;
-            Show = hideshow;
+            ShowAdd = showAdd;
+            Show = isShow;
         }
         
         #endregion

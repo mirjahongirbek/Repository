@@ -13,7 +13,7 @@ namespace RepositoryRule.Base
         where TDevice:class, IUserDevice<TKey>
 
     {
-        Task<T> GetAsync(T model);
+      //  Task<T> GetAsync(T model);
         //  Task<AuthResult> LoginAsync(T model);
         Task<T> GetLoginOrEmail(string model);
         Task<T> GetUser(T model);

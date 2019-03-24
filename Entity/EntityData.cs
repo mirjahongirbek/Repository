@@ -7,7 +7,7 @@ namespace Entity
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        [Props(jwtKey:"Id")]
+        [Props(name:"userId",jwtKey:"Id")]
         public int UserId { get; set; }
     }
     //public class User : IAuthUser<int>

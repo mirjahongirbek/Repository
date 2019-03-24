@@ -270,14 +270,14 @@ namespace EntityRepository
 
         public virtual IEnumerable<T> FindReverse(int offset, int limit)
         {
-            return _dbSet.SkipLast(offset).TakeLast(limit);
+            return _dbSet.OrderByDescending(m => m.Id).Skip(offset).Take(limit).ToList();
         }
 
         public virtual IEnumerable<T> FindReverse(string key, string value, int offset, int limit)
         {
             var props = typeof(T).GetProperty(key);
             var result = _dbSet.Where(m => props.GetValue(m, null) == value).SkipLast(offset).TakeLast(limit);
-            return result;
+            return result.ToList();
         }
 
 

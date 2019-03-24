@@ -8,12 +8,14 @@ using System.Security.Claims;
 using System.Text;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography;
 
 namespace RepositoryRule.State
 {
     public static class State
     {
         public static bool IsDevelopment { get; set; }
+        public static bool NoHashPassword { get; set; }
         public static string RandomString(int count)
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -65,55 +67,25 @@ namespace RepositoryRule.State
             return claimsIdentity;
             
         }
-        public static object ReturnObj(this object obj)
-        {
-            var type = obj.GetType();
-            try
-            {
-
-                var attr = type.GetCustomAttribute<JohaAttribute>();
-                if (attr == null)
-                {
-                    return obj;
-                }
-                if (attr.ReturnModel)
-                {
-                    return obj;
-                }
-                if (attr.Fields.Count == 0)
-                {
-                    return obj;
-                }
-                Dictionary<string, object> result = new Dictionary<string, object>();
-                foreach (var i in attr.Fields)
-                {
-                    var prop = type.GetProperty(i);
-                    var attribute = type.GetCustomAttribute<PropsAttribute>();
-                    if (attribute == null)
-                    {
-                        attribute = new PropsAttribute() { Name = type.Name };
-                    }
-                    if (string.IsNullOrEmpty(attribute.Name))
-                    {
-                        attribute.Name = type.GetProperty(i).Name;
-                    }
-                    if (prop == null) continue;
-                    result.Add(attribute.Name, prop.GetValue(obj));
-                }
-                return result;
-            }
-            catch (Exception ext)
-            {
-                throw new Exception(ext.Message, ext);
-            }
-        }
-        private static object ConvertMe(this string value, string type)
-        {
-            return null;
-        }
-
         #region
-       public static  PropsAttribute GetProps(this System.Reflection.PropertyInfo i)
+      public  static string ComputeSha256Hash(this string rawData)
+        {
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+        public static  PropsAttribute GetProps(this System.Reflection.PropertyInfo i)
         {
             var attribute = i.GetCustomAttribute<PropsAttribute>();
             if (attribute == null && i.GetGetMethod().IsVirtual)
@@ -132,6 +104,7 @@ namespace RepositoryRule.State
             {
                 attr = attribute;
             }
+           
             if (foregnKey != null)
             {
                 attr.ForeignTable = attr.ForeignTable ?? foregnKey.Name;
@@ -159,15 +132,18 @@ namespace RepositoryRule.State
                     var attribute = field.GetCustomAttribute<PropsAttribute>();
                     if (attribute == null)
                     {
-                        attribute = new PropsAttribute() { Name = field.Name };
+                        attribute = new PropsAttribute(name:field.Name);
                     }
                     #region SetProperty
-                    var typeName = field.PropertyType.Name;
-                    var item = user.FindFirst(attribute.JWTKey).Value.ConvertMe(typeName);
-                    field.SetValue(obj, item);
+                    
+                    var item = user.FindFirst(attribute.JWTKey).Value;
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        field.SetValue(obj, Convert.ChangeType(item, field.PropertyType));
+                    }                    
                     #endregion
                     var isRequired = field.GetCustomAttribute<RequiredAttribute>();
-                    if (isRequired != null)
+                    if (isRequired != null || attribute.Required)
                     {
                         var value = field.GetValue(type);
                         if (value == null)
@@ -185,6 +161,7 @@ namespace RepositoryRule.State
         }
         public static object ListDataParse(object data, Type type)
         {
+            
             return data;
         }
         #endregion

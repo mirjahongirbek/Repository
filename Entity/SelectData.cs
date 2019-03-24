@@ -17,7 +17,7 @@ namespace Entity
     {
         [Key]
         public int Id { get; set; }
-        [Props(jwtKey: "CompanyId")]
+        [Props(name:"companyId",jwtKey: "CompanyId")]
         public int CompanyId { get; set; }
     }
     public class User : IAuthUser<int, RoleUser, UserDevice>
@@ -57,7 +57,7 @@ namespace Entity
     }
     public class DataBase : DbContext, EntityRepository.Context.IDataContext
     {
-        public DataBase(DbContextOptions<DataBase> options) : base(options)
+        public DataBase() 
         {
             Database.EnsureCreated();
         }

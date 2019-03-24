@@ -9,7 +9,7 @@ namespace Entity
     [Joha]
     public class Data : IEntity<string>
     {
-        [Props(DefaultLabel:"Edit", font: FontType.EditDelete, hideAdd:false, hideshow:true)]
+        [Props(DefaultLabel:"Edit", font: FontType.EditDelete, showAdd:false, isShow:true)]
        // [BsonId]
         public string Id { get; set; }
         [Props("Name", FontType.String)]

@@ -63,7 +63,7 @@ namespace GenericController.State
             stop.Stop();
             if (RepositoryRule.State.State.IsDevelopment)
             {
-                return control.GetResponse();
+                return control.GetResponse(ext.Message);
             }
             string code = Guid.NewGuid().ToString();
 

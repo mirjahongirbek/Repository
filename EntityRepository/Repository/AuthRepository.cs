@@ -6,7 +6,7 @@ using RepositoryRule.CacheRepository;
 using RepositoryRule.Entity;
 using System;
 using System.Linq;
-using System.Text.RegularExpressions;
+using RepositoryRule.State;
 using System.Threading.Tasks;
 
 namespace EntityRepository.Repository
@@ -58,32 +58,23 @@ namespace EntityRepository.Repository
             }
             return false;
         }
+        //TODO NotImplement
         public virtual Task Logout(string token)
         {
             var access= token.Split(" ")[1];
-            
             return null;
         }
-        public virtual Task<AuthResult> RegisterAsync()
-        {
-            throw new System.NotImplementedException();
-        }
-        public virtual async Task<T> Get(T model)
-        {
-            return _db.FirstOrDefault(m => model.UserName == m.UserName);
-        }
+      
         
         protected virtual string HashPassword(string password)
         {
-            return password;
+            if (RepositoryRule.State.State.NoHashPassword)
+                return password;
+                return password.ComputeSha256Hash();
+
         }
 
-        public virtual Task<T> GetAsync(T model)
-        {
-            return null;
-        }
-
-        public virtual async Task<T> GetUser(T model)
+      public virtual async Task<T> GetUser(T model)
         {
             try
             {

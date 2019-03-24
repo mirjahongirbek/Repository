@@ -65,7 +65,7 @@ namespace GenericControllers.Controllers
                 var type = _types[id];
                 if (type == null)
                 {
-                    return this.GetResponse();
+                    return this.GetResponse(Responses.ServiceNotFound);
                 }
                 Dictionary<string, PropsAttribute> result = new Dictionary<string, PropsAttribute>();
                 foreach (var i in type.GetProperties())
@@ -109,10 +109,14 @@ namespace GenericControllers.Controllers
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
+                if (string.IsNullOrEmpty(name))
+                {
+                    return this.GetResponse(Responses.ComeNullModal);
+                }
                 var service = _service.FirstOrDefault(m => m.Key == name).Value;
                 if (service == null)
                 {
-                    this.GetResponse();
+                    this.GetResponse(Responses.ServiceNotFound);
                 }
                 var type = service.GetType();
                 var result = type.InvokeMember("Get", bindings, null, service, new object[] { id, 108, "GetById" });
@@ -132,12 +136,12 @@ namespace GenericControllers.Controllers
             {
                 if (string.IsNullOrEmpty(id))
                 {
-                    return this.GetResponse();
+                    return this.GetResponse(Responses.ComeNullModal);
                 }
                 var type = _types.FirstOrDefault(m => m.Key == id).Value;
                 if (type == null)
                 {
-                    return this.GetResponse(status: 403);
+                    return this.GetResponse(Responses.ServiceNotFound);
                 }
                 var service = _service[id];
                 var result = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { 0, "GetAllCount" });
@@ -155,7 +159,6 @@ namespace GenericControllers.Controllers
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
-
                 var service = _service.FirstOrDefault(m => m.Key == id).Value;
                 if (service == null)
                 {
@@ -163,6 +166,7 @@ namespace GenericControllers.Controllers
                 }
                 var type = service.GetType();
                 var result = type.InvokeMember("FindAll", bindings, null, service, null);
+                RState.ListDataParse(result, type);
                 stop.Stop();
                 return this.GetResponse(result);
             }
@@ -183,12 +187,12 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return this.GetResponse(); // TODO change
+                    return this.GetResponse(Responses.ComeNullModal); // TODO change
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)
                 {
-                    return this.GetResponse(); //TODO change
+                    return this.GetResponse(Responses.ServiceNotFound); //TODO change
                 }
                 var result = model.data.SerializeMe(type);
                 var service = _service[model.name];
@@ -203,7 +207,7 @@ namespace GenericControllers.Controllers
                 await command.Add(result, User);
                 service.GetType().GetMethod("Add").Invoke(service, new object[] { result, 152, "PostData" });
                 stop.Stop();
-                return this.GetResponse();
+                return this.GetResponse(result);
             }
             catch (Exception ext)
             {
@@ -218,18 +222,19 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return this.GetResponse();
+                    return this.GetResponse(Responses.ComeNullModal);
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)
                 {
-                    return this.GetResponse();
+                    return this.GetResponse(Responses.ServiceNotFound);
                 }
                 var service = _service[model.name];
                 PostResponse result = new PostResponse();
                 if (model.WithOffset)
                 {
-                    result.items = service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
+                    result.items = (List<object>)service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
+                    RState.ListDataParse(result.items, type);
                     result.count = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { model.key, model.value, 0, "DatawitCount" });
                 }
                 else
@@ -254,24 +259,22 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return this.GetResponse();
+                    return this.GetResponse(Responses.ComeNullModal);
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)
                 {
-                    return this.GetResponse();
+                    return this.GetResponse(Responses.ServiceNotFound);
                 }
                 var service = _service[model.name];
                 object result;
                 if (model.WithOffset)
                 {
                     result = service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
-
                 }
                 else
                 {
                     result = service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, });
-
                 }
                 stop.Stop();
                 return this.GetResponse(result);
@@ -285,7 +288,6 @@ namespace GenericControllers.Controllers
                 //return this.GetResponse(status: 400, code: code);
             }
         }
-
         #endregion
 
         #region Put Request
@@ -297,18 +299,24 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return this.GetResponse();
+                    return this.GetResponse(Responses.ComeNullModal);
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)
                 {
-                    return this.GetResponse();
+                    return this.GetResponse(Responses.ServiceNotFound);
                 }
                 var result = model.data.SerializeMe(type);
+                var errlist = result.CheckJwt(User);
+
+                if (errlist.Count > 0)
+                {
+                    return this.GetResponse(errlist);
+                }
                 var service = _service[model.name];
                 service.GetType().GetMethod("Update").Invoke(service, new object[] { result, 158, "GenericUpdateData" });
                 stop.Stop();
-                return this.GetResponse(new SuccesResponse());
+                return this.GetResponse(Responses.Success);
 
             }
             catch (Exception ext)
@@ -325,8 +333,14 @@ namespace GenericControllers.Controllers
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
-
-                return this.GetResponse();
+               var tip= _types.FirstOrDefault(m => m.Key == name).Value;
+                if(tip== null)
+                {
+                    return this.GetResponse(Responses.ServiceNotFound);
+                }
+                var service=_service[name];
+             var result=    service.GetType().InvokeMember("Delete", bindings, null, service, new object[]{ id});
+                return this.GetResponse(Responses.Success);
             }
             catch (Exception ext)
             {
