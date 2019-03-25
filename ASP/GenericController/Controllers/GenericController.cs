@@ -28,11 +28,13 @@ namespace GenericControllers.Controllers
         Dictionary<string, object> _service;
         ILoggerRepository _logger;
         IEnumerable<IControllerCommand<TKey>> _commands;
+
         public GenericController(List<Type> types,
             List<object> serviceList,
             IEnumerable<IControllerCommand<TKey>> commands = null
             )
         {
+
             if (commands != null)
             {
                 _commands = commands;
@@ -182,7 +184,7 @@ namespace GenericControllers.Controllers
         [HttpPost]
         public virtual async Task<ResponseData> AddData([FromBody]Request model)
         {
-            Stopwatch stop = Stopwatch.StartNew();
+            var stop = Stopwatch.StartNew();
             try
             {
                 if (model == null)
@@ -203,8 +205,11 @@ namespace GenericControllers.Controllers
                     return this.GetResponse(errlist);
                 }
 
-                var command = _commands.FirstOrDefault(m => m.Name == model.name);
-                await command.Add(result, User);
+                var command = _commands?.FirstOrDefault(m => m.Name == model.name);
+                if (command != null)
+                {D:\project3\Repository\Rule\RepositoryRule\Properties\
+                    await command.Add(result, User);
+                }                
                 service.GetType().GetMethod("Add").Invoke(service, new object[] { result, 152, "PostData" });
                 stop.Stop();
                 return this.GetResponse(result);
@@ -230,7 +235,7 @@ namespace GenericControllers.Controllers
                     return this.GetResponse(Responses.ServiceNotFound);
                 }
                 var service = _service[model.name];
-                PostResponse result = new PostResponse();
+                var result = new PostResponse();
                 if (model.WithOffset)
                 {
                     result.items = (List<object>)service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
