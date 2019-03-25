@@ -207,7 +207,7 @@ namespace GenericControllers.Controllers
 
                 var command = _commands?.FirstOrDefault(m => m.Name == model.name);
                 if (command != null)
-                {D:\project3\Repository\Rule\RepositoryRule\Properties\
+                {
                     await command.Add(result, User);
                 }                
                 service.GetType().GetMethod("Add").Invoke(service, new object[] { result, 152, "PostData" });
