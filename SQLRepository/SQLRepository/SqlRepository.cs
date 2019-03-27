@@ -37,6 +37,7 @@ namespace SQLRepository
         }
         public SqlRepository(IDataContext context, ILoggerRepository logger):this(context) {
             _logger = logger;
+            
         }
         public SqlRepository(IDataContext context, ILoggerRepository logger, ICacheRepository<T> cache):this(context, logger)
         {

@@ -29,11 +29,4 @@
     <ProjectReference Include="..\ServiceList\ServiceList.csproj" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <None Update="Mobile.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

@@ -93,6 +93,7 @@ namespace Examples
             containerBuilder.Populate(services);
             containerBuilder.RegisterType<CompanyService>().As<ICompanyService>();
             containerBuilder.RegisterType<ProductService>().As<IProductService>();
+            containerBuilder.RegisterType<CategoryService>().As<ICategoryService>();
             containerBuilder.RegisterType<AuthUserService>().As<IAuthUserService>();
             containerBuilder.RegisterType<RoleService>().As<IRoleService>();
             containerBuilder.RegisterType<UserDeviceService>().As< IUserDeviceService>();

@@ -20,6 +20,16 @@ namespace ServiceList
     {
 
     }
+    public interface ICategoryService:IRepositoryBase<Category, int>
+    {
+
+    }
+    public class CategoryService : EntityRepository.SqlRepository<Category>, ICategoryService
+    {
+        public CategoryService(IDataContext context) : base(context)
+        {
+        }
+    }
     public class CompanyService : EntityRepository.SqlRepository<Company>, ICompanyService
     {
         public CompanyService(IDataContext context) : base(context)
