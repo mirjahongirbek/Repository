@@ -17,8 +17,22 @@ namespace Entity
     {
         [Key]
         public int Id { get; set; }
-        [Props(name:"companyId",jwtKey: "CompanyId")]
+        [Props(name: "companyId", jwtKey: "CompanyId", ShowAdd = false)]
         public int CompanyId { get; set; }
+        [Props(name:"category", FontType =FontType.Select, ForeignTable = "Category")]
+        public int CategoryId { get; set; }
+        public virtual Category Category { get; set; }
+        [Props(name:"isActive", FontType =FontType.CheckBox)]
+        public bool IsActive { get; set; }
+        [Props(name: "CreateDate", FontType =FontType.DateTime)]
+        public DateTime CreateDate { get; set; }
+    }
+
+    public class Category:IEntity<int>
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Descriotion { get; set; }
     }
     public class User : IAuthUser<int, RoleUser, UserDevice>
     {
@@ -53,11 +67,10 @@ namespace Entity
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
         public DateTime AccessTime { get; set; }
-
     }
     public class DataBase : DbContext, EntityRepository.Context.IDataContext
     {
-        public DataBase() 
+        public DataBase()
         {
             Database.EnsureCreated();
         }
@@ -65,7 +78,8 @@ namespace Entity
         public DbSet<User> Users { get; set; }
         public DbSet<RoleUser> RoleUsers { get; set; }
         public DbSet<UserDevice> UserDevices { get; set; }
-
+        public DbSet<Category> Categorys { get; set; }
+        public DbSet<Product> Products { get; set; }
         public DbContext DataContext { get { return this; } }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

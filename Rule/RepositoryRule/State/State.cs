@@ -135,12 +135,14 @@ namespace RepositoryRule.State
                         attribute = new PropsAttribute(name:field.Name);
                     }
                     #region SetProperty
-                    
-                    var item = user.FindFirst(attribute.JWTKey).Value;
-                    if (!string.IsNullOrEmpty(item))
+                    if (!string.IsNullOrEmpty(attribute.JWTKey))
                     {
-                        field.SetValue(obj, Convert.ChangeType(item, field.PropertyType));
-                    }                    
+                        var item = user.FindFirst(attribute.JWTKey).Value;
+                        if (!string.IsNullOrEmpty(item))
+                        {
+                            field.SetValue(obj, Convert.ChangeType(item, field.PropertyType));
+                        }
+                    }
                     #endregion
                     var isRequired = field.GetCustomAttribute<RequiredAttribute>();
                     if (isRequired != null || attribute.Required)

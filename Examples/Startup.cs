@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using RepositoryRule.Entity;
 using ServiceList;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Examples
 {
@@ -91,11 +93,13 @@ namespace Examples
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
+            Entity.Start.Build(containerBuilder);
             containerBuilder.RegisterType<CompanyService>().As<ICompanyService>();
             containerBuilder.RegisterType<ProductService>().As<IProductService>();
+            containerBuilder.RegisterType<CategoryService>().As<ICategoryService>();
             containerBuilder.RegisterType<AuthUserService>().As<IAuthUserService>();
             containerBuilder.RegisterType<RoleService>().As<IRoleService>();
-            containerBuilder.RegisterType<UserDeviceService>().As< IUserDeviceService>();
+            containerBuilder.RegisterType<UserDeviceService>().As<IUserDeviceService>();
 
             //containerBuilder.RegisterType<DataService>().As<IDataService>();
             //containerBuilder.RegisterType<SelectDataService>().As<ISelectDataService>();
@@ -109,6 +113,8 @@ namespace Examples
             //});
 
             this.ApplicationContainer = containerBuilder.Build();
+           var ss= this.ApplicationContainer.Resolve<IEnumerable<IEntity<int>>>();
+
             return new AutofacServiceProvider(this.ApplicationContainer);
             // return services.BuildAspectCoreServiceProvider();
             //return services.BuildAspectCoreServiceProvider();
