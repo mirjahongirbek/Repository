@@ -1,24 +1,31 @@
-﻿using GenericController.Entity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using RepositoryRule.Attributes;
 using RepositoryRule.Entity;
 using RepositoryRule.Exceptions;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
-using System.Security.Claims;
+using System.Linq;
 
-namespace GenericController.State
+namespace SiteResponse
 {
-    public static class State
+    public  static class State
     {
         public static bool HasMethod(this object objectToCheck, string methodName)
         {
             var type = objectToCheck.GetType();
             return type.GetMethod(methodName) != null;
         }
+        public static int GetLang(this ControllerBase control)
+        {
+            try
+            {
+              var result=(string)  control.Request.Headers.FirstOrDefault(m => m.Key == "Accept-Language").Value;
+              if (string.IsNullOrEmpty(result)) return 0;
+              return Convert.ToInt32(result);
+            }catch(Exception ext){}
+            return 0;
+        }
+
         public static ResponseData GetResponse(this ControllerBase cBase,
             object result = null,
             int status = 200,
@@ -56,10 +63,10 @@ namespace GenericController.State
         }
         public static ResponseData ExceptionResult(this ControllerBase control,
             Exception ext,
-            Stopwatch stop= null,
+            Stopwatch stop,
             object model = null)
         {
-            stop?.Stop();
+            stop.Stop();
             if (RepositoryRule.State.State.IsDevelopment)
             {
                 return control.GetResponse(ext.Message);
@@ -71,4 +78,3 @@ namespace GenericController.State
         }
     }
 }
-

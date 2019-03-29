@@ -1,4 +1,7 @@
-﻿namespace GenericController.Entity
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace RepositoryRule.Entity
 {
     public class Query
     {
@@ -9,5 +12,4 @@
         public string key { get; set; }
         public string value { get; set; }
     }
-
 }

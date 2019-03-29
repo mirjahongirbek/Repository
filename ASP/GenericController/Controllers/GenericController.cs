@@ -10,9 +10,9 @@ using RepositoryRule.LoggerRepository;
 using System.Diagnostics;
 using RepositoryRule.Base;
 using RepositoryRule.State;
-using GenericController.State;
 using RState = RepositoryRule.State.State;
-
+using RepositoryRule.Entity;
+using SiteResponse;
 
 namespace GenericControllers.Controllers
 {
@@ -20,6 +20,7 @@ namespace GenericControllers.Controllers
     //Add next GetType changes
     //modalviewModal
     //anguage
+
     public class GenericController<TKey> : ControllerBase
     {
 
@@ -233,15 +234,15 @@ namespace GenericControllers.Controllers
                 PostResponse result = new PostResponse();
                 if (model.WithOffset)
                 {
-                    result.items = (List<object>)service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
-                    RState.ListDataParse(result.items, type);
-                    result.count = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { model.key, model.value, 0, "DatawitCount" });
+                    result.Items = (List<object>)service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
+                    RState.ListDataParse(result.Items, type);
+                    result.Count = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { model.key, model.value, 0, "DatawitCount" });
                 }
                 else
                 {
-                    result.items = service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.offset, model.limit, });
-                    RState.ListDataParse(result.items, type);
-                    result.count = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { 0, "PostsData" });
+                    result.Items = (List<object>)service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.offset, model.limit, });
+                    RState.ListDataParse(result.Items, type);
+                    result.Count = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { 0, "PostsData" });
                 }
                 stop.Stop();
                 return this.GetResponse(result);
