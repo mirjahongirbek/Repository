@@ -6,34 +6,69 @@ using LanguageService.State;
 using RepositoryRule.Attributes;
 using System.Reflection;
 using LangEntity;
+using System.Threading.Tasks;
+using System.Collections;
+using System;
 
 namespace LanguageService
 {
     public class LanguageService<TKey> : ILanguageService<TKey>
-        where TKey : class, IEntity<TKey>
+         where TKey : struct
     {
         RestClient _client;
         string _project;
-        public LanguageService(IEnumerable<IEntity<TKey>> types, string project)
+        string modal;
+        public LanguageService(IEnumerable<IEntity<TKey>> types, string project = null)
         {
-            _project = project;
+            _project = project ?? "joha";
+            _client = State.LangState.Client;
+            modal = "/api/Modal";
+            foreach (var i in types)
+            {
+
+                ParseType(i);
+                //Task.Run(() =>
+                //{
+                //    ParseType(i);
+                //});
+                //ParseType(i).Start();
+            }
+
         }
         public void ParseType(IEntity<TKey> entity)
         {
+
             var model = entity.GetType();
             var joha = model.GetCustomAttribute<JohaAttribute>();
             Model request = new Model();
+            request.Id = model.GUID;
+            request.ProjectName = _project;
             request.EntityModel = joha?.Name ?? model.Name;
-            request.Project = _project;
+            request.GetFields = new List<Field>();
             foreach (var i in model.GetProperties())
             {
-               var key=LangState.TT(i);
+                var key = LangState.TT(i);
                 if (key.Value != null)
-                    request.Fields.Add(key.Key, key.Value);
+                    request.GetFields.Add(new Field()
+                    {
+                        Name = key.Key,
+                        Type = key.Value,
+                        Value = ""
+                    });
             }
-            
-           
+            Console.WriteLine(modal + "/Add");
+            var result = _client.PostAsync<ResponseData, Model>(request, modal + "/Add").Result;
+
+
+
+
+
         }
+        public async Task GetEntity(IEntity<TKey> entity, string lang)
+        {
+
+        }
+
     }
 
 }

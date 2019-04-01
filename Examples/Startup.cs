@@ -2,6 +2,8 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Entity;
+using LanguageService;
+using LanguageService.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -100,7 +102,7 @@ namespace Examples
             containerBuilder.RegisterType<AuthUserService>().As<IAuthUserService>();
             containerBuilder.RegisterType<RoleService>().As<IRoleService>();
             containerBuilder.RegisterType<UserDeviceService>().As<IUserDeviceService>();
-
+            containerBuilder.RegisterType<LanguageService<int>>().As<ILanguageService<int>>().AutoActivate();
             //containerBuilder.RegisterType<DataService>().As<IDataService>();
             //containerBuilder.RegisterType<SelectDataService>().As<ISelectDataService>();
             //containerBuilder.RegisterGeneric(typeof(MongoRepository<>))

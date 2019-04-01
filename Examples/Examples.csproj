@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ASP\GenericController\GenericController.csproj" />
     <ProjectReference Include="..\EntityRepository\EntityRepository.csproj" />
+    <ProjectReference Include="..\LanguageService\LanguageService.csproj" />
     <ProjectReference Include="..\LoggingRepository\LoggingRepository.csproj" />
     <ProjectReference Include="..\ServiceList\ServiceList.csproj" />
   </ItemGroup>

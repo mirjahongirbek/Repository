@@ -11,7 +11,7 @@ namespace Examples
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args).UseUrls("http://*:1596")
+            WebHost.CreateDefaultBuilder(args).UseUrls("http://*:9564")
                 .UseStartup<Startup>();
     }
 }
