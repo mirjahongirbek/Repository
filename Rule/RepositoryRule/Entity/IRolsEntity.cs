@@ -9,9 +9,4 @@ namespace RepositoryRule.Entity
         string Description { get; set; }
 
     }
-    public interface  ICommandResult
-    {
-        bool Success { get; }
-        string ErrorText { get; set; }
-    }
 }

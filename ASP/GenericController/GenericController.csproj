@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="State\**" />
+    <EmbeddedResource Remove="State\**" />
+    <None Remove="State\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
@@ -15,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\EntityRepository\EntityRepository.csproj" />
     <ProjectReference Include="..\..\Entity\Entity.csproj" />
+    <ProjectReference Include="..\..\ResponseLogic\ResponseLogic.csproj" />
   </ItemGroup>
 
   <ItemGroup>

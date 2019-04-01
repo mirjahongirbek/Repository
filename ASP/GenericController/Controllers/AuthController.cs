@@ -1,6 +1,4 @@
-﻿using GenericController.Entity;
-using GenericController.Modals;
-using GenericController.State;
+﻿using GenericController.Modals;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryRule.Base;
 using RepositoryRule.Entity;
@@ -12,6 +10,7 @@ using RepositoryRule.State;
 using RepositoryRule.Attributes;
 using System.Reflection;
 using System.Diagnostics;
+using SiteResponse;
 
 namespace GenericControllers.Controllers
 {
