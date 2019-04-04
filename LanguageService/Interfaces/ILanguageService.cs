@@ -1,4 +1,4 @@
-﻿using RepositoryRule.Entity;
+﻿
 
 namespace LanguageService.Interfaces
 {

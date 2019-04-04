@@ -90,4 +90,27 @@ namespace Entity
     }
     #endregion
 
+
 }
+/*
+ { "name": "categoryId", 
+ "options": 
+ { "serviceName": "Product", 
+ "data": { "showAdd": true, 
+ "fontType": 28,
+ "foreignTable": "Category",
+ "name": "category",
+ "label": "category",
+ "url": null, 
+ "jwtKey": null,
+ "regular": null,
+ "typeId": null,
+ "show": true, 
+ "frontUrl": null, 
+ "required": false, 
+ "userReference": null,
+ "langId": 0, 
+ "types": null,
+ "maxLength": 0,
+ "minLength": 0 } } }
+     */

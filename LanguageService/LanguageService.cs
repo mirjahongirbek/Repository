@@ -27,11 +27,6 @@ namespace LanguageService
             {
 
                 ParseType(i);
-                //Task.Run(() =>
-                //{
-                //    ParseType(i);
-                //});
-                //ParseType(i).Start();
             }
 
         }
@@ -57,17 +52,14 @@ namespace LanguageService
                     });
             }
             Console.WriteLine(modal + "/Add");
-            var result = _client.PostAsync<ResponseData, Model>(request, modal + "/Add").Result;
-
-
-
-
-
+            var result = _client.PostAsync<RepositoryRule.Entity.ResponseData, Model>(request, modal + "/Add").Result;
         }
         public async Task GetEntity(IEntity<TKey> entity, string lang)
         {
 
+
         }
+        
 
     }
 

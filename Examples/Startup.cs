@@ -16,7 +16,6 @@ using Microsoft.IdentityModel.Tokens;
 using RepositoryRule.Entity;
 using ServiceList;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Examples

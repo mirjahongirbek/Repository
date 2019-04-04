@@ -9,6 +9,7 @@ using System.Text;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
+using System.Collections;
 
 namespace RepositoryRule.State
 {
@@ -163,7 +164,10 @@ namespace RepositoryRule.State
         }
         public static object ListDataParse(object data, Type type)
         {
-            
+            if(data is IEnumerable)
+            {
+
+            }
             return data;
         }
         #endregion
