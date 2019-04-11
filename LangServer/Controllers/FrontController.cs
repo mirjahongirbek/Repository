@@ -19,11 +19,11 @@ namespace LangServer.Controllers
         {
             return null;
         }
-        [HttpGet]
-        public async Task<bool> ExsistProject(string name)
-        {
-            return State.State.Client.IndexExists("front" + name).Exists;
-        }
+        //[HttpGet]
+        //public async Task<bool> ExsistProject(string name)
+        //{
+        //    return State.State.Client.IndexExists("front" + name).Exists;
+        //}
 
         [HttpGet]
         public FrontResult GetBy(string name)

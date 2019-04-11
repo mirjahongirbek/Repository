@@ -9,6 +9,7 @@ using LangEntity;
 using System.Threading.Tasks;
 using System.Collections;
 using System;
+using LangEntity.Project;
 
 namespace LanguageService
 {
@@ -35,8 +36,8 @@ namespace LanguageService
 
             var model = entity.GetType();
             var joha = model.GetCustomAttribute<JohaAttribute>();
-            Model request = new Model();
-            request.Id = model.GUID;
+            TraficcModel request = new TraficcModel();
+            request.Id = model.GUID; //.ToString();
             request.ProjectName = _project;
             request.EntityModel = joha?.Name ?? model.Name;
             request.GetFields = new List<Field>();
@@ -52,14 +53,57 @@ namespace LanguageService
                     });
             }
             Console.WriteLine(modal + "/Add");
-            var result = _client.PostAsync<RepositoryRule.Entity.ResponseData, Model>(request, modal + "/Add").Result;
+            var result = _client.PostAsync<RepositoryRule.Entity.ResponseData, TraficcModel>(request, modal + "/Add").Result;
         }
-        public async Task GetEntity(IEntity<TKey> entity, string lang)
+        public async Task<List<T>> GetList<T>(int langId)
         {
+            try
+            {
+               var id= typeof(T).GUID;
 
 
+            }catch(Exception ext)
+            {
+
+            }
+            return null;
+        }
+        public async Task<T> Get<T>(int langId, Dictionary<string, object> list)
+        {
+            try
+            {
+
+            }
+            catch (Exception ext)
+            {
+
+            }
+        }
+        public async Task<T> GetById<T>(int langId, int id)
+        {
+            try
+            {
+
+            }
+            catch (Exception ext)
+            {
+
+            }
         }
         
+        public async Task GetEntity(IEntity<TKey> entity, string lang)
+        {
+            try
+            {
+
+            }
+            catch (Exception ext)
+            {
+
+            }
+
+        }
+
 
     }
 

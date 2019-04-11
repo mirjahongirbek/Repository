@@ -1,11 +1,12 @@
-﻿using Nest;
+﻿using LangEntity.Project;
+using MongoDB.Bson.Serialization.Attributes;
+using RepositoryRule.Entity;
 using System;
 using System.Collections.Generic;
 
 namespace LangEntity
 {
-    [ElasticsearchType(IdProperty = nameof(Id))]
-    public class Model
+    public class TraficcModel
     {
         public Guid Id { get; set; }
         public string Index { get; set; }
@@ -13,16 +14,22 @@ namespace LangEntity
         public string ProjectName { get; set; }
         public Dictionary<string, string> Langs = new Dictionary<string, string>();
         public List<Field> GetFields { get; set; }
-        
+
     }
-
-
-    public class Field
+    public class EntityData:IEntity<string>
     {
-        public string Key { get; set; }
-        public string Type { get; set; }
+        [BsonId]
+        public string Id { get; set; }
+        public int LangId { get; set; }
+        public Dictionary<string, object> Data { get; set; }
+        public Guid Guid { get; set; }
+        [BsonIgnore]
         public string Name { get; set; }
-        public string Value { get; set; }
-       
+
+
     }
+
+
+
+
 }

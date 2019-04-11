@@ -16,7 +16,7 @@ namespace LangEntity
         public Guid Id { get; set; }
         public string ProjectName { get; set; }
         public Dictionary<string, string> Langs { get; set; }
-        
+       
     }
     
 }

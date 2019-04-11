@@ -1,8 +1,6 @@
 ﻿using System;
-
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Elasticsearch.Net;
 using LangServer.Services.Interfaces;
 using LangServer.Services.Logic;
 using Microsoft.AspNetCore.Builder;
@@ -11,8 +9,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nest;
-using States = LangServer.State.State;
+using MongoRepository.Context;
+
 namespace LangServer
 {
     public class Startup
@@ -34,35 +32,38 @@ namespace LangServer
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            ElasticConnection();
+           // ElasticConnection();
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
-            containerBuilder.RegisterType<ModelService>().As<IModelService>();
+            containerBuilder.RegisterType<Db.MongoDb>().As<IMongoContext>();
+            containerBuilder.RegisterType<LanguageService>().As<ILanguageService>();
+            containerBuilder.RegisterType<EntityService>().As<IEntityService>();
+          //  containerBuilder.RegisterType<ModelService>().As<IModelService>();
             containerBuilder.RegisterType<ProjectService>().As<IProjectService>().AutoActivate();
-
             Builder = containerBuilder.Build();
             return new AutofacServiceProvider(this.Builder);
 
         }
-         void ElasticConnection()
-        {
-            var node1 = new Uri("http://localhost:9200/");
-          //  var node2 = new Uri("http://152.30.11.192:9200/");
-            var nodes = new Uri[]
-            {
-                node1
-               //,node2
-            };
-            var connectionPool = new SniffingConnectionPool(nodes);
-            var connectionSettings = new ConnectionSettings(connectionPool)
-                                .SniffOnConnectionFault(false)
-                                .SniffOnStartup(false)
-                                .SniffLifeSpan(TimeSpan.FromMinutes(1));
-            States.Client = new ElasticClient(connectionSettings);
-       //     _client = new ElasticClient(connectionSettings);
-        }
+       //  void ElasticConnection()
+       // {
+            
+       //     var node1 = new Uri("http://localhost:9200/");
+       //   //  var node2 = new Uri("http://152.30.11.192:9200/");
+       //     var nodes = new Uri[]
+       //     {
+       //         node1
+       //        //,node2
+       //     };
+       //     var connectionPool = new SniffingConnectionPool(nodes);
+       //     var connectionSettings = new ConnectionSettings(connectionPool)
+       //                         .SniffOnConnectionFault(false)
+       //                         .SniffOnStartup(false)
+       //                         .SniffLifeSpan(TimeSpan.FromMinutes(1));
+       //   //  States.Client = new ElasticClient(connectionSettings);
+       ////     _client = new ElasticClient(connectionSettings);
+       // }
         //public void ElasticConnection()
         //{
         //    States.Urls = new System.Collections.Generic.List<string>() { "http://localhost:9200" };

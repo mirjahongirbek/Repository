@@ -50,8 +50,7 @@ namespace EntityRepository.Repository
         }
         public virtual async Task<bool> IsLoginedAsync(T model)
         {
-
-           var result= _db.FirstOrDefault(m => m.UserName == model.UserName || m.Email == model.UserName);
+            var result= _db.FirstOrDefault(m => m.UserName == model.UserName || m.Email == model.UserName);
             if(result== null)
             {
                 return true;
@@ -99,6 +98,7 @@ namespace EntityRepository.Repository
        
         public async Task<bool> RegisterAsync(T model)
         {
+            model.Password = HashPassword(model.Password);
             await _db.AddAsync(model);
             _context.SaveChanges();
             return true;

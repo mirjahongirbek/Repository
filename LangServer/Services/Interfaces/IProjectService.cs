@@ -1,16 +1,15 @@
-﻿using LangEntity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LangEntity.Language;
+using LangEntity.Project;
+using MongoRepository.MongoRepository;
 
 namespace LangServer.Services.Interfaces
 {
-  public  interface IProjectService
+    public interface IProjectService : IMongoRepository<LangProject>
     {
-        //void CreateIndex(string indexName)
-         void AddModel(Model model);
-        void AddFront(Model model);
-        Task Update();
     }
+    public interface ILanguageService : IMongoRepository<Language>
+    {
+
+    }
+
 }
