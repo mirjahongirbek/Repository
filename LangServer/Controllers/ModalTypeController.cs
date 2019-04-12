@@ -43,6 +43,10 @@ namespace LangServer.Controllers
         #endregion
         
         
+        public ResponseData GetByDict(string Project)
+        {
+            return null;
+        }
         #region 
         [HttpPost]
         public async Task<ResponseData> Add([FromBody] TraficcModel model)

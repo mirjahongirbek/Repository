@@ -11,6 +11,7 @@ using LangEntity.Project;
 using RestSharp;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RepositoryRule.State;
 
 namespace LanguageService
 {
@@ -70,23 +71,25 @@ namespace LanguageService
                     var result= _client.Execute(rest);
                    var res= JsonConvert.DeserializeObject<ResponseData>(result.Content);
                     JToken token = null;
-
-                   var ff=((JObject)res.result).GetValue("data");
-                    
-                    
+                    var list = ((JArray)res.result).ToObject<List<EntityData>>();
+                    var results = new List<T>();
+                    foreach (var i in list)
+                    {
+                       results.Add( i.Data.ConvertDictionary<T>());
+                    }
+                    return results;
                 }
                 catch(Exception ext)
                 {
-
+                    throw ext;
                 }
-                
-                
+                                
             }
             catch (Exception ext)
             {
-
+                throw ext;
             }
-            return null;
+        
         }
         public async Task<T> Get<T>(int langId, Dictionary<string, object> list)
             where T:class
