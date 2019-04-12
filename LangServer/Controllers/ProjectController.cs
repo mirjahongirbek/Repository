@@ -28,6 +28,7 @@ namespace LangServer.Controllers
             return this.GetResponse(State.State.LangProject);
         }
 
+        [HttpGet]
         public async Task<ResponseData> AddLanguage(string name, Guid id, int langId)
         {
             try
@@ -46,6 +47,7 @@ namespace LangServer.Controllers
                 return this.GetResponse(ext);
             }
         }
+        [HttpGet]
         public async Task<ResponseData> GetModal(string name, Guid id, int langId)
         {
             try
@@ -76,7 +78,7 @@ namespace LangServer.Controllers
 
         }
         [HttpGet]
-        public async Task<ResponseData> GetFirst(string name, Guid id, int id)
+        public async Task<ResponseData> GetFirst(string name, Guid id, int langId)
         {
             try
             {
@@ -86,6 +88,7 @@ namespace LangServer.Controllers
             {
 
             }
+            return null;
         }
 
     }

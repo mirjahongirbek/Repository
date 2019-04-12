@@ -1,15 +1,16 @@
 ﻿using RepositoryRule.Entity;
 using System.Collections.Generic;
 using LanguageService.Interfaces;
-using RestClientDotNet;
 using LanguageService.State;
 using RepositoryRule.Attributes;
 using System.Reflection;
 using LangEntity;
 using System.Threading.Tasks;
-using System.Collections;
 using System;
 using LangEntity.Project;
+using RestSharp;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LanguageService
 {
@@ -23,13 +24,12 @@ namespace LanguageService
         {
             _project = project ?? "joha";
             _client = State.LangState.Client;
-            modal = "/api/Modal";
             foreach (var i in types)
             {
 
                 ParseType(i);
             }
-
+          
         }
         public void ParseType(IEntity<TKey> entity)
         {
@@ -52,23 +52,44 @@ namespace LanguageService
                         Value = ""
                     });
             }
-            Console.WriteLine(modal + "/Add");
-            var result = _client.PostAsync<RepositoryRule.Entity.ResponseData, TraficcModel>(request, modal + "/Add").Result;
+            
+            var rest= new RestRequest("/Modal/Add", Method.POST);
+            rest.AddJsonBody(request);
+           var result= _client.Execute(rest);
+                      
         }
         public async Task<List<T>> GetList<T>(int langId)
         {
             try
             {
                var id= typeof(T).GUID;
+                var url = "/Project/GetModal?name=" + _project+ "&id=" + id.ToString() + "&langId=" + langId;
+                var rest = new RestRequest(url, Method.GET);
+                try
+                {
+                    var result= _client.Execute(rest);
+                   var res= JsonConvert.DeserializeObject<ResponseData>(result.Content);
+                    JToken token = null;
 
+                   var ff=((JObject)res.result).GetValue("data");
+                    
+                    
+                }
+                catch(Exception ext)
+                {
 
-            }catch(Exception ext)
+                }
+                
+                
+            }
+            catch (Exception ext)
             {
 
             }
             return null;
         }
         public async Task<T> Get<T>(int langId, Dictionary<string, object> list)
+            where T:class
         {
             try
             {
@@ -78,8 +99,9 @@ namespace LanguageService
             {
 
             }
+            return null;
         }
-        public async Task<T> GetById<T>(int langId, int id)
+        public async Task<T> GetById<T>(int langId, int id) where T : class
         {
             try
             {
@@ -89,6 +111,7 @@ namespace LanguageService
             {
 
             }
+            return null;
         }
         
         public async Task GetEntity(IEntity<TKey> entity, string lang)
@@ -101,6 +124,7 @@ namespace LanguageService
             {
 
             }
+            
 
         }
 

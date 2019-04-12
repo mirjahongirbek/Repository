@@ -1,6 +1,5 @@
-﻿using LanguageService.Converter;
-using RepositoryRule.Entity;
-using RestClientDotNet;
+﻿using RepositoryRule.Entity;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +42,11 @@ namespace LanguageService.State
             {
                 if (_client == null)
                 {
-                    _client = new RestClientDotNet.RestClient(new NewtonsoftSerializationAdapter(), new Uri(Uri??"http://localhost:9001/api"));
+                    if(Uri== null)
+                    {
+                        Uri = "http://127.0.0.1:9001/api";
+                    }
+                    _client = new RestClient(Uri);
                 }
                 return _client;
             }
