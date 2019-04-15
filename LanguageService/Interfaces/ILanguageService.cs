@@ -1,6 +1,8 @@
 ﻿
 
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace LanguageService.Interfaces
@@ -9,11 +11,11 @@ namespace LanguageService.Interfaces
         where TKey:struct
     {
         Task<List<T>> GetList<T>(int langId);
-        Task<T> Get<T>(int langId, Dictionary<string, object> list)
-            where T : class;
+       
         Task<T> GetById<T>(int langId, int id)
         where T : class;
-
+        Task<IEnumerable<T>> Find<T>(int langId, Expression<Func<T, bool>> expression)
+            where T : class;
     }
 
 }

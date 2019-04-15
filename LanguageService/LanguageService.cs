@@ -12,6 +12,8 @@ using RestSharp;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RepositoryRule.State;
+using System.Linq.Expressions;
+using MongoDB.Driver;
 
 namespace LanguageService
 {
@@ -70,8 +72,7 @@ namespace LanguageService
                 {
                     var result= _client.Execute(rest);
                    var res= JsonConvert.DeserializeObject<ResponseData>(result.Content);
-                    JToken token = null;
-                    var list = ((JArray)res.result).ToObject<List<EntityData>>();
+                   var list = ((JArray)res.result).ToObject<List<EntityData>>();
                     var results = new List<T>();
                     foreach (var i in list)
                     {
@@ -91,18 +92,60 @@ namespace LanguageService
             }
         
         }
-        public async Task<T> Get<T>(int langId, Dictionary<string, object> list)
+        public async Task<T> Get<T>(int langId, Expression<Func<T, bool>> expression)
             where T:class
         {
             try
             {
-
+                
             }
             catch (Exception ext)
             {
 
             }
             return null;
+        }
+        private List<T> ConvertList<T>(RestRequest request)
+        {
+           var response=_client.Execute(request);
+           var desc= JsonConvert.DeserializeObject<ResponseData>(response.Content);
+           return ((JArray)desc.result).ToObject<List<T>>();
+            
+        }
+        public async Task<IEnumerable<T>> Find<T>(int langId,Expression<Func<T, bool>> expression)
+            where T:class
+        {
+
+            try
+            {
+                var query = LangState.ConvertString<T>(expression);
+               var tip= typeof(T);
+                RestRequest rest = new RestRequest("/Modal/Search", Method.POST);
+                SearchViewModal modal = new SearchViewModal()
+                {
+                    Id = tip.GUID,
+                    ProjectName = _project,
+                    LangId = langId,
+                    query = query
+
+                };
+                rest.AddJsonBody(modal);
+                List<T> results= new List<T>();
+                var list= ConvertList<EntityData>(rest);
+                foreach (var i in list)
+                {
+                    results.Add(i.Data.ConvertDictionary<T>());
+                }
+                return results;
+            }
+            catch (Exception ext)
+            {
+
+                throw ext;
+            }
+         
+
+
         }
         public async Task<T> GetById<T>(int langId, int id) where T : class
         {
@@ -131,7 +174,10 @@ namespace LanguageService
 
         }
 
-
+        public Task<T> Get<T>(int langId, Dictionary<string, object> list) where T : class
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

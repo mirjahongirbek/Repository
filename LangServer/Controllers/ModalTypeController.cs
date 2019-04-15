@@ -39,7 +39,18 @@ namespace LangServer.Controllers
             //return States.LangProject.Projects.FirstOrDefault(m => m.Name == Project) ? true : false;
             
         }
-        
+       
+        public async Task<ResponseData> Search([FromBody]SearchViewModal model)
+        {
+            try
+            {
+               
+            }
+            catch(Exception ext)
+            {
+
+            }
+        }
         #endregion
         
         
@@ -86,5 +97,7 @@ namespace LangServer.Controllers
            
         }
         #endregion
+
     }
+   
 }

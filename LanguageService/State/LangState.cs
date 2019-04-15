@@ -1,8 +1,11 @@
-﻿using RepositoryRule.Entity;
+﻿using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
+using RepositoryRule.Entity;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -50,6 +53,15 @@ namespace LanguageService.State
                 }
                 return _client;
             }
+        }
+        public static string ConvertString<T>(Expression<Func<T, bool>> expression)
+         where T : class
+        {
+            var ser = BsonSerializer.SerializerRegistry.GetSerializer<T>();
+            var filter = ((FilterDefinition<T>)new ExpressionFilterDefinition<T>(expression));
+            return filter.Render(ser, BsonSerializer.SerializerRegistry).ToString();
+            
+
         }
     }
 }

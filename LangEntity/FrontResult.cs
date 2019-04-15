@@ -18,5 +18,12 @@ namespace LangEntity
         public Dictionary<string, string> Langs { get; set; }
        
     }
-    
+    public class SearchViewModal
+    {
+        public string ProjectName { get; set; }
+        public Guid Id { get; set; }
+        public int LangId { get; set; }
+        public string query { get; set; }
+    }
+
 }
