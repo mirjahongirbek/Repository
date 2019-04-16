@@ -23,7 +23,8 @@ namespace LangEntity
         public string ProjectName { get; set; }
         public Guid Id { get; set; }
         public int LangId { get; set; }
-        public string query { get; set; }
+        public string  key{ get; set; }
+        public dynamic value { get; set; }
     }
 
 }

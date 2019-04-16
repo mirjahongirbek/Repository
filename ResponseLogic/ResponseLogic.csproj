@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Joha.ResponseLogic</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>Joha</Authors>
+    <Company />
+    <Product />
   </PropertyGroup>
 
   <ItemGroup>

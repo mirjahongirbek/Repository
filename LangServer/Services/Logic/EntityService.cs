@@ -44,5 +44,12 @@ namespace LangServer.Services.Logic
             db.InsertOne(model);
             return Task.CompletedTask;
         }
+
+        public async Task<IEnumerable<EntityData>> Find(string projectName, BsonDocument docuement)
+        {
+           var db= _database.GetCollection<EntityData>(projectName);
+           var list= db.Find(docuement).ToList();
+            return list;
+        }
     }
 }

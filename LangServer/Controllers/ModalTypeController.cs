@@ -8,6 +8,8 @@ using States = LangServer.State.State;
 using LangServer.State;
 using System.Linq;
 using System;
+using MongoDB.Bson;
+using SiteResponse;
 
 namespace LangServer.Controllers
 {
@@ -17,13 +19,16 @@ namespace LangServer.Controllers
     {
        
         IProjectService _project;
+        IEntityService _entity;
 
         public ModalController(
-            IProjectService project
+            IProjectService project,
+             IEntityService entity
             )
         {
             
             _project = project;
+            _entity = entity;
         }
 
         #region Get
@@ -40,20 +45,23 @@ namespace LangServer.Controllers
             
         }
        
-        public async Task<ResponseData> Search([FromBody]SearchViewModal model)
+        public async Task<ResponseData> GetByKey([FromBody]SearchViewModal model)
         {
             try
             {
-               
+                BsonDocument docuement = new BsonDocument();
+                docuement.Add(new BsonElement("Guid", model.Id));
+                docuement.Add(new BsonElement("LangId", model.LangId));
+                docuement.Add(new BsonElement("Data." + model.key, model.value));
+                return this.GetResponse(_entity.Find(model.ProjectName, docuement));
             }
             catch(Exception ext)
             {
-
+                return this.GetResponse(ext);
             }
         }
         #endregion
-        
-        
+                
         public ResponseData GetByDict(string Project)
         {
             return null;

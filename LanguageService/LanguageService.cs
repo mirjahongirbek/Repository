@@ -32,7 +32,7 @@ namespace LanguageService
 
                 ParseType(i);
             }
-          
+
         }
         public void ParseType(IEntity<TKey> entity)
         {
@@ -55,49 +55,49 @@ namespace LanguageService
                         Value = ""
                     });
             }
-            
-            var rest= new RestRequest("/Modal/Add", Method.POST);
+
+            var rest = new RestRequest("/Modal/Add", Method.POST);
             rest.AddJsonBody(request);
-           var result= _client.Execute(rest);
-                      
+            var result = _client.Execute(rest);
+
         }
         public async Task<List<T>> GetList<T>(int langId)
         {
             try
             {
-               var id= typeof(T).GUID;
-                var url = "/Project/GetModal?name=" + _project+ "&id=" + id.ToString() + "&langId=" + langId;
+                var id = typeof(T).GUID;
+                var url = "/Project/GetModal?name=" + _project + "&id=" + id.ToString() + "&langId=" + langId;
                 var rest = new RestRequest(url, Method.GET);
                 try
                 {
-                    var result= _client.Execute(rest);
-                   var res= JsonConvert.DeserializeObject<ResponseData>(result.Content);
-                   var list = ((JArray)res.result).ToObject<List<EntityData>>();
+                    var result = _client.Execute(rest);
+                    var res = JsonConvert.DeserializeObject<ResponseData>(result.Content);
+                    var list = ((JArray)res.result).ToObject<List<EntityData>>();
                     var results = new List<T>();
                     foreach (var i in list)
                     {
-                       results.Add( i.Data.ConvertDictionary<T>());
+                        results.Add(i.Data.ConvertDictionary<T>());
                     }
                     return results;
                 }
-                catch(Exception ext)
+                catch (Exception ext)
                 {
                     throw ext;
                 }
-                                
+
             }
             catch (Exception ext)
             {
                 throw ext;
             }
-        
+
         }
         public async Task<T> Get<T>(int langId, Expression<Func<T, bool>> expression)
-            where T:class
+            where T : class
         {
             try
             {
-                
+
             }
             catch (Exception ext)
             {
@@ -107,46 +107,13 @@ namespace LanguageService
         }
         private List<T> ConvertList<T>(RestRequest request)
         {
-           var response=_client.Execute(request);
-           var desc= JsonConvert.DeserializeObject<ResponseData>(response.Content);
-           return ((JArray)desc.result).ToObject<List<T>>();
-            
-        }
-        public async Task<IEnumerable<T>> Find<T>(int langId,Expression<Func<T, bool>> expression)
-            where T:class
-        {
-
-            try
-            {
-                var query = LangState.ConvertString<T>(expression);
-               var tip= typeof(T);
-                RestRequest rest = new RestRequest("/Modal/Search", Method.POST);
-                SearchViewModal modal = new SearchViewModal()
-                {
-                    Id = tip.GUID,
-                    ProjectName = _project,
-                    LangId = langId,
-                    query = query
-
-                };
-                rest.AddJsonBody(modal);
-                List<T> results= new List<T>();
-                var list= ConvertList<EntityData>(rest);
-                foreach (var i in list)
-                {
-                    results.Add(i.Data.ConvertDictionary<T>());
-                }
-                return results;
-            }
-            catch (Exception ext)
-            {
-
-                throw ext;
-            }
-         
-
+            var response = _client.Execute(request);
+            var desc = JsonConvert.DeserializeObject<ResponseData>(response.Content);
+            return ((JArray)desc.result).ToObject<List<T>>();
 
         }
+
+   
         public async Task<T> GetById<T>(int langId, int id) where T : class
         {
             try
@@ -159,25 +126,65 @@ namespace LanguageService
             }
             return null;
         }
-        
-        public async Task GetEntity(IEntity<TKey> entity, string lang)
+        public Task<T> Search<T>(int langId, Expression<Func<T, IComparable>> outExpr, object value) where T : class
         {
             try
             {
+                var propertyInfo = ((MemberExpression)outExpr.Body).Member as PropertyInfo;
+                if (propertyInfo == null)
+                {
+                    throw new ArgumentException("The lambda expression 'property' should point to a valid Property");
+                }
+                SearchViewModal model = new SearchViewModal();
+                model.ProjectName = _project;
+                var tip = typeof(T);
+                model.Id = tip.GUID;
+                model.key = propertyInfo.Name;
+                model.value = value;
+                RestRequest rest = new RestRequest("/ModalType/GetByKey", Method.POST);
+                rest.AddJsonBody(model);
+
+               var result= _client.Execute(rest);
 
             }
-            catch (Exception ext)
+            catch(Exception ext)
             {
 
             }
-            
-
+            return null;
         }
+       // public async Task<IEnumerable<T>> Find<T>(int langId, Expression<Func<T, bool>> expression)
+       //where T : class
+       // {
 
-        public Task<T> Get<T>(int langId, Dictionary<string, object> list) where T : class
-        {
-            throw new NotImplementedException();
-        }
+       //     try
+       //     {
+       //         var query = LangState.ConvertString<T>(expression);
+       //         var tip = typeof(T);
+       //         RestRequest rest = new RestRequest("/Modal/Search", Method.POST);
+       //         SearchViewModal modal = new SearchViewModal()
+       //         {
+       //             Id = tip.GUID,
+       //             ProjectName = _project,
+       //             LangId = langId,
+
+
+       //         };
+       //         rest.AddJsonBody(modal);
+       //         List<T> results = new List<T>();
+       //         var list = ConvertList<EntityData>(rest);
+       //         foreach (var i in list)
+       //         {
+       //             results.Add(i.Data.ConvertDictionary<T>());
+       //         }
+       //         return results;
+       //     }
+       //     catch (Exception ext)
+       //     {
+
+       //         throw ext;
+       //     }
+      // }
     }
 
 }

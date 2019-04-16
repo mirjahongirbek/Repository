@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using RepositoryRule.Entity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LangEntity
 {
@@ -21,14 +22,15 @@ namespace LangEntity
         [BsonId]
         public string Id { get; set; }
         public int LangId { get; set; }
-        public Dictionary<string, object> Data { get; set; }
+        
+        public dynamic Data { get; set; }
+        //public Dictionary<string, object> Data { get; set; }
         public Guid Guid { get; set; }
         [BsonIgnore]
         public string Name { get; set; }
 
 
     }
-
 
 
 

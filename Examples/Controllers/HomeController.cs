@@ -25,6 +25,7 @@ namespace Examples.Controllers
         [HttpGet]
         public async Task<string> Index1()
         {
+            await _language.Search<Product>(2,m=>m.CategoryId,1);
           var sd= await _language.GetList<Product>(1);
             return "hello world";
         }
