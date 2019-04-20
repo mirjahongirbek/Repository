@@ -53,13 +53,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQlLiteExample", "SQlLiteEx
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LanguageServices", "LanguageServices", "{7CD0BB71-5F86-4D32-9C9C-C092969B870F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageService", "LanguageService\LanguageService.csproj", "{8A049BCF-7921-4A0A-BD07-D3074B3F9DDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageService", "LanguageService\LanguageService.csproj", "{8A049BCF-7921-4A0A-BD07-D3074B3F9DDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangEntity", "LangEntity\LangEntity.csproj", "{6492D618-FFF8-4D01-948B-5CEDBF2AEBFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangEntity", "LangEntity\LangEntity.csproj", "{6492D618-FFF8-4D01-948B-5CEDBF2AEBFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangServer", "LangServer\LangServer.csproj", "{6DAE5759-00F0-4E76-B4A3-1F7B84940128}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangServer", "LangServer\LangServer.csproj", "{6DAE5759-00F0-4E76-B4A3-1F7B84940128}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseLogic", "ResponseLogic\ResponseLogic.csproj", "{C05C1CC9-AF0D-4D55-B8A1-4D15A7154647}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResponseLogic", "ResponseLogic\ResponseLogic.csproj", "{C05C1CC9-AF0D-4D55-B8A1-4D15A7154647}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +147,10 @@ Global
 		{6DAE5759-00F0-4E76-B4A3-1F7B84940128}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DAE5759-00F0-4E76-B4A3-1F7B84940128}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DAE5759-00F0-4E76-B4A3-1F7B84940128}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C05C1CC9-AF0D-4D55-B8A1-4D15A7154647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C05C1CC9-AF0D-4D55-B8A1-4D15A7154647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C05C1CC9-AF0D-4D55-B8A1-4D15A7154647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C05C1CC9-AF0D-4D55-B8A1-4D15A7154647}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
