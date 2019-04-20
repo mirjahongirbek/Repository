@@ -9,6 +9,8 @@ using System.Text;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
+using System.Collections;
+using System.Linq;
 
 namespace RepositoryRule.State
 {
@@ -29,6 +31,21 @@ namespace RepositoryRule.State
 
             var finalString = new String(stringChars);
             return finalString;
+        }
+        public static T ConvertDictionary<T>(this Dictionary<string, object> model)
+        {
+           //var tip= typeof(T);
+           var obj= (T)Activator.CreateInstance(typeof(T));
+            var str = obj.GetType();
+            foreach (var i in model)
+            {
+               var props= str.GetProperties().FirstOrDefault(m => m.Name.ToLower() == i.Key.ToLower());
+                if (props != null)
+                {
+                    props.SetValue(obj, i.Value);
+                }
+            }
+            return obj;
         }
         public static ClaimsIdentity CreateClaim<TKey, TRole, T>(this IAuthUser<TKey, TRole, T> user)
             where TRole : class, IRoleUser<TKey>
@@ -163,7 +180,10 @@ namespace RepositoryRule.State
         }
         public static object ListDataParse(object data, Type type)
         {
-            
+            if(data is IEnumerable)
+            {
+
+            }
             return data;
         }
         #endregion

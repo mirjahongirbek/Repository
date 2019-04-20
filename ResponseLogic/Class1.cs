@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SiteResponse
 {
-    public  static class State
+    public static class State
     {
         public static bool HasMethod(this object objectToCheck, string methodName)
         {
@@ -19,10 +19,11 @@ namespace SiteResponse
         {
             try
             {
-              var result=(string)  control.Request.Headers.FirstOrDefault(m => m.Key == "Accept-Language").Value;
-              if (string.IsNullOrEmpty(result)) return 0;
-              return Convert.ToInt32(result);
-            }catch(Exception ext){}
+                var result = (string)control.Request.Headers.FirstOrDefault(m => m.Key == "Accept-Language").Value;
+                if (string.IsNullOrEmpty(result)) return 0;
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ext) { }
             return 0;
         }
 

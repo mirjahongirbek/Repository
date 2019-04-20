@@ -7,5 +7,11 @@ namespace GenericController.Entity
         public object items { get; set; }
         public long count { get; set; }
     }
+    public enum ResponseList
+    {
+        Success,
+        Error,
+
+    }
 
 }

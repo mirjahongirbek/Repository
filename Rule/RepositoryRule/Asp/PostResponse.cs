@@ -5,7 +5,7 @@ namespace RepositoryRule.Entity
 {
     public class PostResponse
     {
-        public List<object> Items { get; set; }
+        public IEnumerable Items { get; set; }
         public long Count { get; set; }
     }
 }

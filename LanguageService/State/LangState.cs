@@ -1,17 +1,21 @@
-﻿using LanguageService.Converter;
-using RestClientDotNet;
+﻿using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
+using RepositoryRule.Entity;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace LanguageService.State
 {
-    public class LangState
+    public static class LangState
     {
         public static string Uri { get; set; }
         private static RestClient _client;
-     static   List<Type> types = new List<Type>
+        static   List<Type> types = new List<Type>
         {
             typeof(string),
             typeof(int),
@@ -27,17 +31,37 @@ namespace LanguageService.State
             return new KeyValuePair<string, string>(info.Name,tip.Name);
 
         }
+        public static Task GetEntity<TKey>(this IEntity<TKey> entity,
+            string lang,
+            string id = null
+            )
+        {
 
+            return null;
+        }
         internal static RestClient Client
         {
             get
             {
                 if (_client == null)
                 {
-                    _client = new RestClientDotNet.RestClient(new NewtonsoftSerializationAdapter(), new Uri(Uri));
+                    if(Uri== null)
+                    {
+                        Uri = "http://127.0.0.1:9001/api";
+                    }
+                    _client = new RestClient(Uri);
                 }
                 return _client;
             }
+        }
+        public static string ConvertString<T>(Expression<Func<T, bool>> expression)
+         where T : class
+        {
+            var ser = BsonSerializer.SerializerRegistry.GetSerializer<T>();
+            var filter = ((FilterDefinition<T>)new ExpressionFilterDefinition<T>(expression));
+            return filter.Render(ser, BsonSerializer.SerializerRegistry).ToString();
+            
+
         }
     }
 }

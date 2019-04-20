@@ -2,6 +2,8 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Entity;
+using LanguageService;
+using LanguageService.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,7 +16,6 @@ using Microsoft.IdentityModel.Tokens;
 using RepositoryRule.Entity;
 using ServiceList;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Examples
@@ -32,6 +33,7 @@ namespace Examples
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            RepositoryRule.State.State.NoHashPassword = true;
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -75,21 +77,6 @@ namespace Examples
                 var aa = provider.GetService<DataBase>();
                return aa;//provider.GetService<ProductContext>();
             });
-            //services.AddEntityFrameworkSqlServer().AddDbContext<EntityDatabase>(options =>
-            //  options.UseSqlServer(connection));
-
-            //services.AddScoped<IDataContext>(provider => provider.GetService<EntityDatabase>());
-            //services.AddScoped<IEntityDataService, EntityDataService>();
-
-            //services.AddScoped<ICompanyService, CompanyService>();
-            //services.AddScoped<IProductService, ProductService>();
-
-           // services.AddScoped<IAuthUserService, AuthUserService>();
-           // services.AddScoped<IRoleService, RoleService>();
-           // services.AddScoped<IUserDeviceService, UserDeviceService>();
-            //services.AddScoped<IRoleRepository<Entity.RoleUser, int>, EntityRepository.Repository.RoleRepository<Entity.RoleUser>>();
-            //services.AddScoped<IUserDeviceRepository<Entity.UserDevice, Entity.RoleUser, int>, EntityRepository.Repository.DeviceRepository<Entity.UserDevice, Entity.RoleUser>>();
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
@@ -100,24 +87,13 @@ namespace Examples
             containerBuilder.RegisterType<AuthUserService>().As<IAuthUserService>();
             containerBuilder.RegisterType<RoleService>().As<IRoleService>();
             containerBuilder.RegisterType<UserDeviceService>().As<IUserDeviceService>();
-
-            //containerBuilder.RegisterType<DataService>().As<IDataService>();
-            //containerBuilder.RegisterType<SelectDataService>().As<ISelectDataService>();
-            //containerBuilder.RegisterGeneric(typeof(MongoRepository<>))
-            //    .As(typeof(IRepositoryBase<,>));
-            // containerBuilder.RegisterType<SeilogLogger>().As<ILoggerRepository>();
-            //containerBuilder.RegisterType<MongoContext>().As<IMongoContext>();
-
-            //containerBuilder.RegisterDynamicProxy(mbox => {
-            //    mbox.Interceptors.AddTyped<MethodExecuteLoggerInterceptor>(args: new object[] {log});
-            //});
-
-            this.ApplicationContainer = containerBuilder.Build();
-           var ss= this.ApplicationContainer.Resolve<IEnumerable<IEntity<int>>>();
+            containerBuilder.RegisterType<LanguageService<int>>().As<ILanguageService<int>>()
+                .AutoActivate().SingleInstance();
+            ApplicationContainer = containerBuilder.Build();
+            var ss= this.ApplicationContainer.Resolve<IEnumerable<IEntity<int>>>();
 
             return new AutofacServiceProvider(this.ApplicationContainer);
-            // return services.BuildAspectCoreServiceProvider();
-            //return services.BuildAspectCoreServiceProvider();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

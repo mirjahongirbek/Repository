@@ -1,5 +1,4 @@
-﻿using GenericController.Entity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +12,7 @@ using RepositoryRule.State;
 using RState = RepositoryRule.State.State;
 using RepositoryRule.Entity;
 using SiteResponse;
+using System.Collections;
 
 namespace GenericControllers.Controllers
 {
@@ -59,13 +59,15 @@ namespace GenericControllers.Controllers
             //_logger = logger;
         }
         #region Props
+        private Type GetType(string id) { return _types.FirstOrDefault(m => m.Key.ToLower() == id.ToLower()).Value; } 
+        public object GetService(string id) { return _service.FirstOrDefault(m => m.Key.ToLower() == id.ToLower()).Value; }
         [HttpGet]
         public virtual ResponseData GetProps(string id)
         {
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
-                var type = _types[id];
+                var type = GetType(id);
                 if (type == null)
                 {
                     return this.GetResponse(Responses.ServiceNotFound);
@@ -87,6 +89,31 @@ namespace GenericControllers.Controllers
             {
                 return this.ExceptionResult(ext, stop);
             }
+        }
+        [HttpGet]
+        public virtual ResponseData GetForegnKey(string id)
+        {
+            Stopwatch stop = Stopwatch.StartNew();
+            try
+            {
+               var tip= GetType(id);
+               var attr= tip.GetCustomAttribute<JohaAttribute>();
+               var service= GetService(id);
+               var serviceType= service.GetType();
+                if (attr== null)
+                {
+                  
+                }
+                var result= (IEnumerable)serviceType.InvokeMember("FindAll", bindings, null, service, null);
+                stop.Stop();
+                return this.GetResponse(result);
+
+            }
+            catch(Exception ext)
+            {
+                return this.ExceptionResult(ext, stop);
+            }
+            
         }
         [HttpGet]
         public ResponseData GetAllName()
@@ -116,7 +143,7 @@ namespace GenericControllers.Controllers
                 {
                     return this.GetResponse(Responses.ComeNullModal);
                 }
-                var service = _service.FirstOrDefault(m => m.Key == name).Value;
+                var service = GetService(name);
                 if (service == null)
                 {
                     this.GetResponse(Responses.ServiceNotFound);
@@ -141,12 +168,13 @@ namespace GenericControllers.Controllers
                 {
                     return this.GetResponse(Responses.ComeNullModal);
                 }
-                var type = _types.FirstOrDefault(m => m.Key == id).Value;
+
+                var type = GetType(id);
                 if (type == null)
                 {
                     return this.GetResponse(Responses.ServiceNotFound);
                 }
-                var service = _service[id];
+                var service = GetService(id);
                 var result = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { 0, "GetAllCount" });
                 stop.Stop();
                 return this.GetResponse(result);
@@ -162,7 +190,7 @@ namespace GenericControllers.Controllers
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
-                var service = _service.FirstOrDefault(m => m.Key == id).Value;
+                var service = GetService(id);//_service.FirstOrDefault(m => m.Key == id).Value;
                 if (service == null)
                 {
                     return this.GetResponse();
@@ -192,15 +220,14 @@ namespace GenericControllers.Controllers
                 {
                     return this.GetResponse(Responses.ComeNullModal); // TODO change
                 }
-                var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
+                var type = GetType(model.name);
                 if (type == null)
                 {
                     return this.GetResponse(Responses.ServiceNotFound); //TODO change
                 }
                 var result = model.data.SerializeMe(type);
-                var service = _service[model.name];
+                var service = GetService(model.name); //_service[model.name];
                 var errlist = result.CheckJwt(User);
-
                 if (errlist.Count > 0)
                 {
                     return this.GetResponse(errlist);
@@ -239,13 +266,14 @@ namespace GenericControllers.Controllers
                 var result = new PostResponse();
                 if (model.WithOffset)
                 {
-                    result.Items = (List<object>)service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
+                    
+                    result.Items = (IEnumerable) service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
                     RState.ListDataParse(result.Items, type);
                     result.Count = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { model.key, model.value, 0, "DatawitCount" });
                 }
                 else
                 {
-                    result.Items = (List<object>)service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.offset, model.limit, });
+                    result.Items = (IEnumerable)service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.offset, model.limit, });
                     RState.ListDataParse(result.Items, type);
                     result.Count = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { 0, "PostsData" });
                 }

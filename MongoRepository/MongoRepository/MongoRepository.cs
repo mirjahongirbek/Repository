@@ -66,11 +66,14 @@ namespace MongoRepository
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
         /// <returns></returns>
-        public Task AddAsync(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public async Task AddAsync(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            if(string.IsNullOrEmpty(model.Id))
+            {
+                model.Id = ObjectId.GenerateNewId().ToString();
+            }
             _cache?.AddAsync(model.Id, model);
-             _db.InsertOneAsync(model);
-            return Task.CompletedTask;
+            await _db.InsertOneAsync(model);
         }
         /// <summary>
         /// 
