@@ -13,6 +13,7 @@ using RState = RepositoryRule.State.State;
 using RepositoryRule.Entity;
 using SiteResponse;
 using System.Collections;
+using GenericController.Store;
 
 namespace GenericControllers.Controllers
 {
@@ -47,19 +48,19 @@ namespace GenericControllers.Controllers
                 var a = types[i].GetCustomAttribute<PropsAttribute>();
                 if (a != null)
                 {
-                    _types.Add(a.Name, types[i]);
-                    _service.Add(a.Name, serviceList[i]);
+                    _types.Add(a.Name.ToLower(), types[i]);
+                    _service.Add(a.Name.ToLower(), serviceList[i]);
                 }
                 else
                 {
-                    _types.Add(types[i].Name, types[i]);
-                    _service.Add(types[i].Name, serviceList[i]);
+                    _types.Add(types[i].Name.ToLower(), types[i]);
+                    _service.Add(types[i].Name.ToLower(), serviceList[i]);
                 }
             }
             //_logger = logger;
         }
         #region Props
-        private Type GetType(string id) { return _types.FirstOrDefault(m => m.Key.ToLower() == id.ToLower()).Value; } 
+        private Type GetType(string id) { return _types.FirstOrDefault(m => m.Key.ToLower() == id.ToLower()).Value; }
         public object GetService(string id) { return _service.FirstOrDefault(m => m.Key.ToLower() == id.ToLower()).Value; }
         [HttpGet]
         public virtual ResponseData GetProps(string id)
@@ -75,8 +76,8 @@ namespace GenericControllers.Controllers
                 Dictionary<string, PropsAttribute> result = new Dictionary<string, PropsAttribute>();
                 foreach (var i in type.GetProperties())
                 {
-                    var attr=i.GetProps();
-                    if(attr!= null)
+                    var attr = i.GetProps();
+                    if (attr != null)
                     {
                         result.Add(Char.ToLower(i.Name[0]) + i.Name.Substring(1), attr);
                     }
@@ -96,24 +97,24 @@ namespace GenericControllers.Controllers
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
-               var tip= GetType(id);
-               var attr= tip.GetCustomAttribute<JohaAttribute>();
-               var service= GetService(id);
-               var serviceType= service.GetType();
-                if (attr== null)
+                var tip = GetType(id);
+                var attr = tip.GetCustomAttribute<JohaAttribute>();
+                var service = GetService(id);
+                var serviceType = service.GetType();
+                if (attr == null)
                 {
-                  
+
                 }
-                var result= (IEnumerable)serviceType.InvokeMember("FindAll", bindings, null, service, null);
+                var result = (IEnumerable)serviceType.InvokeMember("FindAll", bindings, null, service, null);
                 stop.Stop();
                 return this.GetResponse(result);
 
             }
-            catch(Exception ext)
+            catch (Exception ext)
             {
                 return this.ExceptionResult(ext, stop);
             }
-            
+
         }
         [HttpGet]
         public ResponseData GetAllName()
@@ -135,7 +136,7 @@ namespace GenericControllers.Controllers
         [HttpGet]
         public virtual async Task<ResponseData> GetById(TKey id, string name)
         {
-
+            name = name.ToLower();
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
@@ -161,6 +162,7 @@ namespace GenericControllers.Controllers
         [HttpGet]
         public virtual async Task<ResponseData> GetAllCount(string id)
         {
+
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
@@ -204,7 +206,27 @@ namespace GenericControllers.Controllers
             catch (Exception ext)
             {
                 return this.ExceptionResult(ext, stop);
-                
+
+            }
+        }
+        [HttpGet]
+        public virtual async Task<ResponseData> GetViewModal(int id, string name)
+        {
+            try
+            {
+                name = name.ToLower();
+                var model = InternalStore.Modals.FirstOrDefault(m => m.Name == name && m.Actions.Contains((RepositoryRule.Enums.Actions)id));
+                if (model == null)
+                {
+                   return GetProps(name);
+                }
+                var tip=   _types.FirstOrDefault(m => m.Key.ToLower() == name);
+               return this.GetResponse(InternalStore.ParseModalProps(model, tip.Value));
+
+            }
+            catch (Exception ext)
+            {
+                return this.GetResponse(ext);
             }
         }
         #endregion
@@ -237,7 +259,7 @@ namespace GenericControllers.Controllers
                 if (command != null)
                 {
                     await command.Add(result, User);
-                }                
+                }
                 service.GetType().GetMethod("Add").Invoke(service, new object[] { result, 152, "PostData" });
                 stop.Stop();
                 return this.GetResponse(result);
@@ -266,8 +288,8 @@ namespace GenericControllers.Controllers
                 var result = new PostResponse();
                 if (model.WithOffset)
                 {
-                    
-                    result.Items = (IEnumerable) service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
+
+                    result.Items = (IEnumerable)service.GetType().InvokeMember("FindReverse", bindings, null, service, new object[] { model.key, model.value, model.offset, model.limit });
                     RState.ListDataParse(result.Items, type);
                     result.Count = (long)service.GetType().InvokeMember("Count", bindings, null, service, new object[] { model.key, model.value, 0, "DatawitCount" });
                 }
@@ -367,23 +389,23 @@ namespace GenericControllers.Controllers
             Stopwatch stop = Stopwatch.StartNew();
             try
             {
-               var tip= _types.FirstOrDefault(m => m.Key == name).Value;
-                if(tip== null)
+                var tip = _types.FirstOrDefault(m => m.Key == name).Value;
+                if (tip == null)
                 {
                     return this.GetResponse(Responses.ServiceNotFound);
                 }
-                var service=_service[name];
-             var result=    service.GetType().InvokeMember("Delete", bindings, null, service, new object[]{ id});
+                var service = _service[name];
+                var result = service.GetType().InvokeMember("Delete", bindings, null, service, new object[] { id });
                 return this.GetResponse(Responses.Success);
             }
             catch (Exception ext)
             {
                 return this.ExceptionResult(ext, stop);
-               
+
             }
         }
         #endregion
-                
+
     }
 
 }

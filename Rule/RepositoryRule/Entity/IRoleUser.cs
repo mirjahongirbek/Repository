@@ -1,4 +1,5 @@
 ﻿using RepositoryRule.Attributes;
+using RepositoryRule.Enums;
 using System.Collections;
 using System.Collections.Generic;
 

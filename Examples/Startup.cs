@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Entity;
+using GenericController.Middleware;
 using LanguageService;
 using LanguageService.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +18,7 @@ using RepositoryRule.Entity;
 using ServiceList;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Examples
 {
@@ -25,6 +27,7 @@ namespace Examples
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -119,7 +122,7 @@ namespace Examples
                 .WithOrigins("*")
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-
+            app.UseMiddleware<ModelsMiddleware>();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -127,5 +130,7 @@ namespace Examples
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+       
     }
+  
 }

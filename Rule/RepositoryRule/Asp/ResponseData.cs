@@ -9,4 +9,5 @@ namespace RepositoryRule.Entity
         public object error { get; set; }
         public int status { get; set; }
     }
+
 }

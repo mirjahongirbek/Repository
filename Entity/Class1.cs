@@ -1,6 +1,7 @@
 ﻿
 using RepositoryRule.Attributes;
 using RepositoryRule.Entity;
+using RepositoryRule.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
