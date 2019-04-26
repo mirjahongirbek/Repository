@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RepositoryRule.Entity;
 using RepositoryRule.Exceptions;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace SiteResponse
@@ -36,12 +38,9 @@ namespace SiteResponse
             {
 
                 cBase.Response.StatusCode = status;
-                return new ResponseData
+                return new ResponseData()
                 {
-                    error = new
-                    {
-                        err
-                    }
+                    error = err
                 };
             }
 
@@ -51,8 +50,32 @@ namespace SiteResponse
 
             }
 
-            cBase.HttpContext.Response.StatusCode = status;
+           // cBase.HttpContext.Response.StatusCode = status;
             return new ResponseData() { result = result };
+        }
+        
+       
+        public static ResponseData GetResponse(this ControllerBase cBase, object result, object err)
+        {
+            if (err != null)
+            {
+
+                cBase.Response.StatusCode = 400;
+                return new ResponseData()
+                {
+                    error = err
+                };
+            }
+
+
+            if (result is ValidationExeption)
+            {
+
+            }
+
+            // cBase.HttpContext.Response.StatusCode = status;
+            return new ResponseData() { result = result };
+
         }
         public static object SerializeMe(this string data, Type type)
         {
@@ -76,6 +99,16 @@ namespace SiteResponse
 
             return control.GetResponse();
 
+        }
+        public static void Addwwroot(string filepath, IFormFile file)
+        {
+
+            var path = Path.Combine(
+                           Directory.GetCurrentDirectory(),
+                           "wwwroot\\" + filepath);
+            var bytes = new byte[file.Length];
+            file.OpenReadStream().Read(bytes, 0, bytes.Length);
+            File.WriteAllBytes(path, bytes);
         }
     }
 }

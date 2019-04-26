@@ -117,7 +117,7 @@ namespace GenericControllers.Controllers
 
         }
         [HttpGet]
-        public ResponseData GetAllName()
+        public virtual ResponseData GetAllName()
         {
             try
             {
@@ -338,17 +338,14 @@ namespace GenericControllers.Controllers
             catch (Exception ext)
             {
                 return this.ExceptionResult(ext, stop);
-                //stop.Stop();
-                //string code = Guid.NewGuid().ToString();
-                //_logger?.CatchError("PostData", stop.ElapsedMilliseconds, model, ext, "PostData", code);
-                //return this.GetResponse(status: 400, code: code);
+               
             }
         }
         #endregion
 
         #region Put Request
         [HttpPut]
-        public ResponseData UpdateData([FromBody] Request model)
+        public virtual ResponseData UpdateData([FromBody] Request model)
         {
             Stopwatch stop = Stopwatch.StartNew();
             try

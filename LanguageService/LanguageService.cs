@@ -98,6 +98,7 @@ namespace LanguageService
             try
             {
 
+
             }
             catch (Exception ext)
             {
@@ -118,7 +119,8 @@ namespace LanguageService
         {
             try
             {
-
+                RestRequest request = new RestRequest(Method.POST);  
+                
             }
             catch (Exception ext)
             {
@@ -126,6 +128,7 @@ namespace LanguageService
             }
             return null;
         }
+
         public Task<T> Search<T>(int langId, Expression<Func<T, IComparable>> outExpr, object value) where T : class
         {
             try
@@ -153,38 +156,7 @@ namespace LanguageService
             }
             return null;
         }
-       // public async Task<IEnumerable<T>> Find<T>(int langId, Expression<Func<T, bool>> expression)
-       //where T : class
-       // {
-
-       //     try
-       //     {
-       //         var query = LangState.ConvertString<T>(expression);
-       //         var tip = typeof(T);
-       //         RestRequest rest = new RestRequest("/Modal/Search", Method.POST);
-       //         SearchViewModal modal = new SearchViewModal()
-       //         {
-       //             Id = tip.GUID,
-       //             ProjectName = _project,
-       //             LangId = langId,
-
-
-       //         };
-       //         rest.AddJsonBody(modal);
-       //         List<T> results = new List<T>();
-       //         var list = ConvertList<EntityData>(rest);
-       //         foreach (var i in list)
-       //         {
-       //             results.Add(i.Data.ConvertDictionary<T>());
-       //         }
-       //         return results;
-       //     }
-       //     catch (Exception ext)
-       //     {
-
-       //         throw ext;
-       //     }
-      // }
+       
     }
 
 }

@@ -3,7 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.1</Version>
+    <Version>0.0.8</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\EntityRepository\EntityRepository.csproj" />
-    <ProjectReference Include="..\..\Entity\Entity.csproj" />
     <ProjectReference Include="..\..\ResponseLogic\ResponseLogic.csproj" />
   </ItemGroup>
 

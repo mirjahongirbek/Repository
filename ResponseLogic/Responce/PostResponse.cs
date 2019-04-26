@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-
+﻿
 namespace GenericController.Entity
 {
     internal class PostResponse

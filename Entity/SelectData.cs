@@ -1,53 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RepositoryRule.Attributes;
 using RepositoryRule.Entity;
 using RepositoryRule.Enums;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Entity
 {
-    #region Entity
+  
     public class Company : IEntity<int>
     {
         public int Id { get; set; }
         public string Name { get; set; }
-    }
-    public class Product : IEntity<int>
-    {
-        [Key]
-        [Props("Edit", font:FontType.EditDelete)]
-        public int Id { get; set; }
-        [Props(name: "companyId", jwtKey: "CompanyId", ShowAdd = false)]
-        public int CompanyId { get; set; }
-        [Props(name:"category", FontType =FontType.Select, ForeignTable = "Category")]
-        public int CategoryId { get; set; }
-        public virtual Category Category { get; set; }
-        [Props(name:"isActive", FontType =FontType.CheckBox)]
-        public bool IsActive { get; set; }
-        [Props(name: "CreateDate", FontType =FontType.DateTime)]
-        public DateTime CreateDate { get; set; }
-    }
-
-    public class Category:IEntity<int>
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Descriotion { get; set; }
-    }
-    public class User : IAuthUser<int, RoleUser, UserDevice>
-    {
-        [Key]
-        public int Id { get; set; }
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        [Auth]
-        public int CompanyId { get; set; }
-        public IEnumerable<UserDevice> DeviceList { get; set; }
-        public ICollection<RoleUser> Roles { get; set; }
-        public string Salt { get; set; }
     }
 
     public class RoleUser : IRoleUser<int>
@@ -91,7 +54,7 @@ namespace Entity
         }
 
     }
-    #endregion
+
 
 
 }

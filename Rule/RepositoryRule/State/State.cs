@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Collections;
 using System.Linq;
+using System.IO;
 
 namespace RepositoryRule.State
 {
@@ -178,6 +179,7 @@ namespace RepositoryRule.State
                 throw new Exception(ext.Message, ext);
             }
         }
+       
         public static object ListDataParse(object data, Type type)
         {
             if(data is IEnumerable)
