@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RepositoryRule.Attributes
+namespace RepositoryRule.Enums
 {
     public enum RoleEnum
     {

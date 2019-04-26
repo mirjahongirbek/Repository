@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RepositoryRule.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -86,5 +87,11 @@ namespace RepositoryRule.Attributes
         #endregion
        
     }
+    public class DefaultValueAttribute: Attribute
+    {
+        public object Value { get; set; }
+
+    }
+    
 
 }

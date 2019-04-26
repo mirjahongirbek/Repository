@@ -30,7 +30,7 @@ namespace LanguageService
             foreach (var i in types)
             {
 
-                ParseType(i);
+              //  ParseType(i);
             }
 
         }

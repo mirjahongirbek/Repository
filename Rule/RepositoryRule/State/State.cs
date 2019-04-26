@@ -85,7 +85,7 @@ namespace RepositoryRule.State
             
         }
         #region
-      public  static string ComputeSha256Hash(this string rawData)
+        public  static string ComputeSha256Hash(this string rawData)
         {
             // Create a SHA256   
             using (SHA256 sha256Hash = SHA256.Create())
