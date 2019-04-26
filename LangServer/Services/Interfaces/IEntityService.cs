@@ -13,5 +13,6 @@ namespace LangServer.Services.Interfaces
         Task<IEnumerable<EntityData>> EntityLang(string name, int id, Guid guid);
         Task AddEntity(EntityData model);
         Task<IEnumerable<EntityData>> Find(string projectName, BsonDocument docuement);
+        Task<EntityData> GetFirst(string projectName, BsonDocument doc);
     }
 }

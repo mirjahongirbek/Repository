@@ -14,7 +14,7 @@ namespace RepositoryRule.Entity
         }
         public object result { get; set; }
         public object error { get; set; }
-        public int status { get; set; }
+        public int statusCode { get; set; }
         public Responses Responses { get; } 
     }
 

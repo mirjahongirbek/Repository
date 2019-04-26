@@ -30,7 +30,7 @@ namespace LanguageService
             foreach (var i in types)
             {
 
-              //  ParseType(i);
+                //  ParseType(i);
             }
 
         }
@@ -113,20 +113,74 @@ namespace LanguageService
             return ((JArray)desc.result).ToObject<List<T>>();
 
         }
+       private T Getobj<T>(RestRequest rest)
+            where T:class
+        {
+            var result = _client.Execute(rest);
+            if (string.IsNullOrEmpty(result.Content))
+            {
+                return null;
+            }
+           var str= JsonConvert.DeserializeObject<ResponseData>(result.Content);
+          var entityData= ((JObject)str.result).ToObject<EntityData>();
+            
+            return entityData.Data.ConvertDictionary<T>();
+        }
 
-   
         public async Task<T> GetById<T>(int langId, int id) where T : class
         {
             try
             {
-                RestRequest request = new RestRequest(Method.POST);  
-                
+                RestRequest rest = new RestRequest("/Modal/GetByKey", Method.POST);
+                SearchViewModal model = new SearchViewModal();
+                model.ProjectName = _project;
+                var tip = typeof(T);
+                model.Id = tip.GUID;
+                model.key = "id";
+                model.value = id;
+                rest.AddJsonBody(model);
+                return Getobj<T>(rest);
             }
             catch (Exception ext)
             {
-
+                throw ext;
             }
             return null;
+        }
+        public async Task<T> GetFirstBy<T>(int a, Expression<Func<T, bool>> expression)
+            where T:class
+        {
+            try
+            {
+                RestRequest rest = new RestRequest("/Modal/GetByKey", Method.POST);
+                SearchViewModal model = new SearchViewModal();
+                model.ProjectName = _project;
+                model.LangId = a;
+                var tip = typeof(T);
+                model.Id = tip.GUID;
+
+                var body = (BinaryExpression)expression.Body;
+                if (body.Left is MemberExpression member && body.Right is ConstantExpression cns)
+                {
+                    if (body.NodeType == ExpressionType.Equal)
+                    {
+                        model.key = member.Member.Name;
+                        model.value = cns.Value;
+                    }
+                    else return null;
+                }
+                else
+                {
+                    return null;
+                }
+                rest.AddJsonBody(model);
+               return Getobj<T>(rest);
+            }
+            catch (Exception ext)
+            {
+                throw ext;
+            }
+         
         }
 
         public Task<T> Search<T>(int langId, Expression<Func<T, IComparable>> outExpr, object value) where T : class
@@ -147,16 +201,16 @@ namespace LanguageService
                 RestRequest rest = new RestRequest("/ModalType/GetByKey", Method.POST);
                 rest.AddJsonBody(model);
 
-               var result= _client.Execute(rest);
+                var result = _client.Execute(rest);
 
             }
-            catch(Exception ext)
+            catch (Exception ext)
             {
 
             }
             return null;
         }
-       
+
     }
 
 }

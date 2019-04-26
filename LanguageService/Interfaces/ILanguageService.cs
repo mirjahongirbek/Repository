@@ -13,9 +13,9 @@ namespace LanguageService.Interfaces
         Task<List<T>> GetList<T>(int langId);
         Task<T> GetById<T>(int langId, int id)
          where T : class;
-        Task<T> Search<T>(int langId,Expression<Func<T, IComparable>> getProp, object value)
-         where T : class;
-       
+        Task<T> GetFirstBy<T>(int a, Expression<Func<T, bool>> expression)
+           where T : class;
+
     }
 
 }

@@ -51,5 +51,11 @@ namespace LangServer.Services.Logic
            var list= db.Find(docuement).ToList();
             return list;
         }
+        public async Task<EntityData> GetFirst(string projectName, BsonDocument document)
+        {
+            var db = _database.GetCollection<EntityData>(projectName);
+            var doc = await db.Find(document).FirstOrDefaultAsync();
+            return doc;
+        }
     }
 }

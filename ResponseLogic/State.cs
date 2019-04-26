@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace SiteResponse
 {
+    
     public static class State
     {
         public static bool HasMethod(this object objectToCheck, string methodName)
@@ -75,8 +76,32 @@ namespace SiteResponse
 
             // cBase.HttpContext.Response.StatusCode = status;
             return new ResponseData() { result = result };
-
         }
+        public static ResponseData GetResponse(this ControllerBase cBase, Responses responses)
+        {
+            switch (responses)
+            {
+                case Responses.Ok: { } break;
+            }
+        }
+        public static readonly ResponseData Ok = new ResponseData { statusCode = 200, result = "Ok" };
+
+        public static readonly ResponseData Created = new ResponseData { statusCode = 201, result = "Created" };
+
+
+        public static readonly ResponseData BadRequest = new ResponseData { statusCode = 400, error = "Bad request" };
+
+        public static readonly ResponseData Unauthorized = new ResponseData { statusCode = 401, error = "Unauthorized" }; //неавторизован
+
+        public static readonly ResponseData Forbidden = new ResponseData { statusCode = 403, error = "Forbidden" }; //запрещено
+
+        public static readonly ResponseData NotFound = new ResponseData { statusCode = 404, error = "Not found" };
+
+        public static readonly ResponseData Conflict = new ResponseData { statusCode = 409, error = "Already exists" };
+
+        public static readonly ResponseData InvalidParameters = new ResponseData { statusCode = 444, error = "Invalid parameters" };
+
+        public static readonly ResponseData InternalServerError = new ResponseData { statusCode = 500, error = "Internal Server Error" };
         public static object SerializeMe(this string data, Type type)
         {
             return JsonConvert.DeserializeObject(data, type,
@@ -111,4 +136,5 @@ namespace SiteResponse
             File.WriteAllBytes(path, bytes);
         }
     }
+    
 }
