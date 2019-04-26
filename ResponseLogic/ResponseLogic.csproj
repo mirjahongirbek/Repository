@@ -4,10 +4,15 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Joha.ResponseLogic</PackageId>
-    <Version>0.0.1</Version>
-    <Authors>Joha</Authors>
-    <Company />
+    <Version>0.0.7</Version>
+    <Authors>Murtozayev Jahongir</Authors>
+    <Company>Joha</Company>
     <Product />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants></DefineConstants>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <ItemGroup>

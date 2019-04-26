@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>0.0.5</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.7</Version>
     <PackageId>Joha.EntityRepository</PackageId>
     <Authors>Joha</Authors>
     <Company>Joha</Company>
@@ -11,8 +11,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DefineConstants></DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
