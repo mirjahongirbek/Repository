@@ -11,7 +11,10 @@ namespace RepositoryRule.Entity
         InvalidParameters,
         NotFound,
         Ok,
-        Conflict
+        Conflict,
+        BadRequest,
+        UnAuthorized,
+
 
     }
 }

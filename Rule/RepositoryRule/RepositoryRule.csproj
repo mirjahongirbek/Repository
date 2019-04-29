@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.0.8</Version>
+    <Version>0.0.0.9</Version>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />

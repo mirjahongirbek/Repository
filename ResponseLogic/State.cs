@@ -4,13 +4,14 @@ using Newtonsoft.Json;
 using RepositoryRule.Entity;
 using RepositoryRule.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
 namespace SiteResponse
 {
-    
+
     public static class State
     {
         public static bool HasMethod(this object objectToCheck, string methodName)
@@ -30,32 +31,79 @@ namespace SiteResponse
             return 0;
         }
 
+
         public static ResponseData GetResponse(this ControllerBase cBase,
             object result = null,
             int status = 200,
-            object err = null)
+            object err = null )
         {
             if (err != null)
             {
 
-                cBase.Response.StatusCode = status;
+                cBase.Response.StatusCode = status==200?400:status;
                 return new ResponseData()
                 {
                     error = err
                 };
             }
-
-
-            if (result is ValidationExeption)
+            #region
+            if (result is ValidExeption valid)
             {
-
+                cBase.Response.StatusCode = valid.HttpStatusCode;
+                Valid(valid);
             }
-
-           // cBase.HttpContext.Response.StatusCode = status;
+            #endregion
+            if (result is Exception exception)
+            {
+                cBase.Response.StatusCode = 400;
+                return new ResponseData()
+                { error = new { message = exception.Message } };
+            }
+            if (result is ResponseData response)
+            {
+                response.statusCode = response.statusCode == 0 ? 200 : response.statusCode;
+                cBase.Response.StatusCode = response.statusCode;
+                return response;
+            }
+            if (result is Responses responses)
+            {
+                return GetResponse(cBase, responses);
+            }
             return new ResponseData() { result = result };
         }
+        private static ResponseData Valid(ValidExeption valid)
+        {
+            if(valid.Validators!= null)
+            {
+                return new ResponseData
+                {
+                    error = valid.Validators
+                };
+            }
+            if(valid.Validator!= null)
+            {
+                return new ResponseData
+                {
+                     error= valid.Validator
+                };
+            } if(valid.Error!= null)
+            {
+                return new ResponseData()
+                {
+                    error = valid.Error
+                }; 
+
+            }
+            return new ResponseData()
+            {
+                error=new
+                {
+                    message="Http Status Code " + valid.HttpStatusCode
+                }
+            };
+            
+        }
         
-       
         public static ResponseData GetResponse(this ControllerBase cBase, object result, object err)
         {
             if (err != null)
@@ -67,41 +115,47 @@ namespace SiteResponse
                     error = err
                 };
             }
+            return GetResponse(cBase, result, 200, err);
 
-
-            if (result is ValidationExeption)
-            {
-
-            }
-
-            // cBase.HttpContext.Response.StatusCode = status;
-            return new ResponseData() { result = result };
         }
         public static ResponseData GetResponse(this ControllerBase cBase, Responses responses)
         {
-            switch (responses)
+           var result= ResponseList.FirstOrDefault(m => m.Key == responses);
+            if(result.Value== null)
             {
-                case Responses.Ok: { } break;
+                cBase.Response.StatusCode = 400;
+                return new ResponseData() { error= new {  message="result not implament"} };
+            }
+            cBase.Response.StatusCode = result.Value.statusCode;
+            return result.Value;
+            
+        }
+
+
+        #region 
+        private static Dictionary<Responses, ResponseData> _response;
+        private static Dictionary<Responses, ResponseData> ResponseList
+        {
+            get
+            {
+                if (_response == null)
+                {
+                    _response = new Dictionary<Responses, ResponseData>()
+                    {
+                        {Responses.Ok, new  ResponseData { statusCode = 200, result = new {success=true} } },
+                        {Responses.ComeNullModal, new ResponseData(){ statusCode= 201, result= new {success= true, created= true} } },
+                        {Responses.Conflict, new ResponseData(){ statusCode=400, error= new { message= "conflict"} } },
+                        {Responses.InvalidParameters, new ResponseData(){statusCode=400, error= new { message="Invalid Params"} } },
+                        {Responses.NotFound, new ResponseData(){statusCode =404,error= new { message="method not found", } } },
+                        {Responses.ServiceNotFound,new ResponseData(){statusCode= 400, error= new {message="Service Not Found"}} },
+                        {Responses.Success, new ResponseData(){statusCode=200, error=new{ success=true } } },
+                        {Responses.UnAuthorized, new ResponseData(){statusCode=401, error= new { message="Un Authorize"} } },
+                        {Responses.BadRequest, new ResponseData(){ statusCode=400, error=new { message="Bad Request"} } }
+                    };
+                }
+                return _response;
             }
         }
-        public static readonly ResponseData Ok = new ResponseData { statusCode = 200, result = "Ok" };
-
-        public static readonly ResponseData Created = new ResponseData { statusCode = 201, result = "Created" };
-
-
-        public static readonly ResponseData BadRequest = new ResponseData { statusCode = 400, error = "Bad request" };
-
-        public static readonly ResponseData Unauthorized = new ResponseData { statusCode = 401, error = "Unauthorized" }; //неавторизован
-
-        public static readonly ResponseData Forbidden = new ResponseData { statusCode = 403, error = "Forbidden" }; //запрещено
-
-        public static readonly ResponseData NotFound = new ResponseData { statusCode = 404, error = "Not found" };
-
-        public static readonly ResponseData Conflict = new ResponseData { statusCode = 409, error = "Already exists" };
-
-        public static readonly ResponseData InvalidParameters = new ResponseData { statusCode = 444, error = "Invalid parameters" };
-
-        public static readonly ResponseData InternalServerError = new ResponseData { statusCode = 500, error = "Internal Server Error" };
         public static object SerializeMe(this string data, Type type)
         {
             return JsonConvert.DeserializeObject(data, type,
@@ -135,6 +189,7 @@ namespace SiteResponse
             file.OpenReadStream().Read(bytes, 0, bytes.Length);
             File.WriteAllBytes(path, bytes);
         }
+        #endregion
     }
-    
+
 }
