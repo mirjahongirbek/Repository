@@ -7,13 +7,13 @@ namespace RepositoryRule.Entity
     {
         ServiceNotFound,
         Success,
-        ComeNullModal,
         InvalidParameters,
         NotFound,
         Ok,
         Conflict,
         BadRequest,
         UnAuthorized,
+        ModelIsNull
 
 
     }

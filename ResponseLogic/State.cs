@@ -19,12 +19,12 @@ namespace SiteResponse
             var type = objectToCheck.GetType();
             return type.GetMethod(methodName) != null;
         }
-        public static int GetLang(this ControllerBase control)
+        public static int GetLang(this ControllerBase control, int defaultValue=0)
         {
             try
             {
                 var result = (string)control.Request.Headers.FirstOrDefault(m => m.Key == "Accept-Language").Value;
-                if (string.IsNullOrEmpty(result)) return 0;
+                if (string.IsNullOrEmpty(result)) return defaultValue;
                 return Convert.ToInt32(result);
             }
             catch (Exception ext) { }
@@ -143,10 +143,10 @@ namespace SiteResponse
                     _response = new Dictionary<Responses, ResponseData>()
                     {
                         {Responses.Ok, new  ResponseData { statusCode = 200, result = new {success=true} } },
-                        {Responses.ComeNullModal, new ResponseData(){ statusCode= 201, result= new {success= true, created= true} } },
+                        {Responses.ModelIsNull, new ResponseData(){ statusCode= 201, result= new {success= true, created= true} } },
                         {Responses.Conflict, new ResponseData(){ statusCode=400, error= new { message= "conflict"} } },
                         {Responses.InvalidParameters, new ResponseData(){statusCode=400, error= new { message="Invalid Params"} } },
-                        {Responses.NotFound, new ResponseData(){statusCode =404,error= new { message="method not found", } } },
+                        {Responses.NotFound, new ResponseData(){statusCode =400,error= new { message="method not found", } } },
                         {Responses.ServiceNotFound,new ResponseData(){statusCode= 400, error= new {message="Service Not Found"}} },
                         {Responses.Success, new ResponseData(){statusCode=200, error=new{ success=true } } },
                         {Responses.UnAuthorized, new ResponseData(){statusCode=401, error= new { message="Un Authorize"} } },
@@ -188,6 +188,18 @@ namespace SiteResponse
             var bytes = new byte[file.Length];
             file.OpenReadStream().Read(bytes, 0, bytes.Length);
             File.WriteAllBytes(path, bytes);
+        }
+        public static bool Deletewwwroot(string filepath)
+        {
+            var path = Path.Combine(
+                                      Directory.GetCurrentDirectory(),
+                                      "wwwroot\\" + filepath);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                return true;
+            }
+            return false;
         }
         #endregion
     }

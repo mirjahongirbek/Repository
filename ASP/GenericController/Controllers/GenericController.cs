@@ -352,7 +352,7 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return this.GetResponse(Responses.ComeNullModal);
+                    return this.GetResponse(Responses.ModelIsNull);
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)

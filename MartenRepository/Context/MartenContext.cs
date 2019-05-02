@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MartenRepository.Context
 {
-  public interface MartenContext
+  public interface IMartenContext
     {
         IDocumentStore Store { get; set; }
     }
