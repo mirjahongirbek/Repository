@@ -142,7 +142,7 @@ namespace GenericControllers.Controllers
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    return this.GetResponse(Responses.ComeNullModal);
+                    return this.GetResponse(Responses.ModelIsNull);
                 }
                 var service = GetService(name);
                 if (service == null)
@@ -168,7 +168,7 @@ namespace GenericControllers.Controllers
             {
                 if (string.IsNullOrEmpty(id))
                 {
-                    return this.GetResponse(Responses.ComeNullModal);
+                    return this.GetResponse(Responses.ModelIsNull);
                 }
 
                 var type = GetType(id);
@@ -240,7 +240,7 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return this.GetResponse(Responses.ComeNullModal); // TODO change
+                    return this.GetResponse(Responses.ModelIsNull); // TODO change
                 }
                 var type = GetType(model.name);
                 if (type == null)
@@ -277,7 +277,7 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return this.GetResponse(Responses.ComeNullModal);
+                    return this.GetResponse(Responses.ModelIsNull);
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)
@@ -315,7 +315,7 @@ namespace GenericControllers.Controllers
             {
                 if (model == null)
                 {
-                    return this.GetResponse(Responses.ComeNullModal);
+                    return this.GetResponse(Responses.ModelIsNull);
                 }
                 var type = _types.FirstOrDefault(m => m.Key == model.name).Value;
                 if (type == null)

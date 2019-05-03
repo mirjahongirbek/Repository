@@ -143,12 +143,12 @@ namespace SiteResponse
                     _response = new Dictionary<Responses, ResponseData>()
                     {
                         {Responses.Ok, new  ResponseData { statusCode = 200, result = new {success=true} } },
-                        {Responses.ModelIsNull, new ResponseData(){ statusCode= 201, result= new {success= true, created= true} } },
+                        {Responses.ModelIsNull, new ResponseData(){ statusCode= 400, error= new {message= "Model is Null"} } },
                         {Responses.Conflict, new ResponseData(){ statusCode=400, error= new { message= "conflict"} } },
                         {Responses.InvalidParameters, new ResponseData(){statusCode=400, error= new { message="Invalid Params"} } },
                         {Responses.NotFound, new ResponseData(){statusCode =400,error= new { message="method not found", } } },
                         {Responses.ServiceNotFound,new ResponseData(){statusCode= 400, error= new {message="Service Not Found"}} },
-                        {Responses.Success, new ResponseData(){statusCode=200, error=new{ success=true } } },
+                        {Responses.Success, new ResponseData(){statusCode=200, result=new{ success=true } } },
                         {Responses.UnAuthorized, new ResponseData(){statusCode=401, error= new { message="Un Authorize"} } },
                         {Responses.BadRequest, new ResponseData(){ statusCode=400, error=new { message="Bad Request"} } }
                     };

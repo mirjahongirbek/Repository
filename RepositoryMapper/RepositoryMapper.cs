@@ -8,7 +8,7 @@ namespace RepositoryMapper
     //Mapping Class bu now not ready 
   public  class RepositoryMapper
     {
-        public T GetT<T>(object model)
+        public static T GetT<T>(object model)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace RepositoryMapper
             }
 
         }
-        public void Join<T>(T result, T model)
+        public static void Join<T>(T result, T model)
         {
             var resulttip = result.GetType();
             var modeltip = model.GetType();
@@ -42,7 +42,7 @@ namespace RepositoryMapper
             {
                var exist= modeltip.GetProperties().FirstOrDefault(m=>m.Name.ToLower()==i.Name.ToLower());
                 if (exist == null) continue;
-                var attr=       i.GetCustomAttribute<PropAttribute>();
+                var attr=  i.GetCustomAttribute<PropAttribute>();
                 if (attr != null && attr.NotUpdate) continue;
                 if(i.PropertyType.FullName.ToLower()!= exist.PropertyType.FullName.ToLower())
                 {
@@ -54,7 +54,7 @@ namespace RepositoryMapper
             }
 
         }
-        private T CreateObject<T>()
+        private static T CreateObject<T>()
         {
             return (T)Activator.CreateInstance(typeof(T));
         }

@@ -17,7 +17,7 @@ namespace RepositoryRule.Attributes
         {
             Jwt = null;
             IsJwt = false;
-            IsUpdate = false;
+            NotUpdate = false;
             DefaultValue = null;
 
         }
