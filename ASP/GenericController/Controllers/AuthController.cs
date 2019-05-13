@@ -104,7 +104,8 @@ namespace GenericControllers.Controllers
                 var userAgent = Request.Headers["User-Agent"];
                 if (string.IsNullOrEmpty(userAgent))
                 {
-                    this.GetResponse(err: new { Message = "User Agent not Exsist" });
+                    return null;
+                  //  this.GetResponse(err: new { Message = "User Agent not Exsist" });
                 }
                 if (string.IsNullOrEmpty(modal.DeviceId))
                 {
@@ -125,11 +126,12 @@ namespace GenericControllers.Controllers
                     await _device.Add(userDevice);
                 }
                 var getClaim = user.CreateClaim();
-                var result = EntityRepository.State.State.GetAuth(getClaim, userDevice);
-                userDevice.AccessToken = result.AccessToken;
-                userDevice.RefreshToken = result.RefreshToken;
-                await _device.Update(userDevice);
-                return this.GetResponse(result);
+                return null;
+                //var result = EntityRepository.State.State.GetAuth(getClaim, userDevice);
+                //userDevice.AccessToken = result.AccessToken;
+                //userDevice.RefreshToken = result.RefreshToken;
+                //await _device.Update(userDevice);
+                //return this.GetResponse(result);
             }
             catch(Exception ext)
             {

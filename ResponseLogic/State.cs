@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using RepositoryRule.Entity;
 using RepositoryRule.Exceptions;
@@ -19,7 +20,7 @@ namespace SiteResponse
             var type = objectToCheck.GetType();
             return type.GetMethod(methodName) != null;
         }
-        public static int GetLang(this ControllerBase control, int defaultValue=0)
+        public static int GetLang(this ControllerBase control, int defaultValue = 0)
         {
             try
             {
@@ -30,20 +31,33 @@ namespace SiteResponse
             catch (Exception ext) { }
             return 0;
         }
-
-
+        public static ResponseData GetResponse(this ControllerBase cBase, ModelStateDictionary modelState)
+        {
+            ResponseData result = new ResponseData();
+            string message = "";
+            foreach (var state in modelState)
+            {
+                if (state.Value.ValidationState != ModelValidationState.Invalid)
+                {
+                    continue;
+                }
+                message += "\r\n" + state.Key + "не соответствует";
+            }
+            result.error = new { message = message };
+            return result;
+        }
         public static ResponseData GetResponse(this ControllerBase cBase,
             object result = null,
             int status = 200,
-            object err = null )
+            object error = null)
         {
-            if (err != null)
+            if (error != null)
             {
 
-                cBase.Response.StatusCode = status==200?400:status;
+                cBase.Response.StatusCode = status == 200 ? 400 : status;
                 return new ResponseData()
                 {
-                    error = err
+                    error = error
                 };
             }
             #region
@@ -73,37 +87,38 @@ namespace SiteResponse
         }
         private static ResponseData Valid(ValidExeption valid)
         {
-            if(valid.Validators!= null)
+            if (valid.Validators != null)
             {
                 return new ResponseData
                 {
                     error = valid.Validators
                 };
             }
-            if(valid.Validator!= null)
+            if (valid.Validator != null)
             {
                 return new ResponseData
                 {
-                     error= valid.Validator
+                    error = valid.Validator
                 };
-            } if(valid.Error!= null)
+            }
+            if (valid.Error != null)
             {
                 return new ResponseData()
                 {
                     error = valid.Error
-                }; 
+                };
 
             }
             return new ResponseData()
             {
-                error=new
+                error = new
                 {
-                    message="Http Status Code " + valid.HttpStatusCode
+                    message = "Http Status Code " + valid.HttpStatusCode
                 }
             };
-            
+
         }
-        
+
         public static ResponseData GetResponse(this ControllerBase cBase, object result, object err)
         {
             if (err != null)
@@ -118,17 +133,25 @@ namespace SiteResponse
             return GetResponse(cBase, result, 200, err);
 
         }
+        public static ResponseData GetResponse(this ControllerBase cBase, ResponseData response)
+        {
+            if (response.Responses != null)
+            {
+                return GetResponse(cBase, response.result);
+            }
+            return response;
+        }
         public static ResponseData GetResponse(this ControllerBase cBase, Responses responses)
         {
-           var result= ResponseList.FirstOrDefault(m => m.Key == responses);
-            if(result.Value== null)
+            var result = ResponseList.FirstOrDefault(m => m.Key == responses);
+            if (result.Value == null)
             {
                 cBase.Response.StatusCode = 400;
-                return new ResponseData() { error= new {  message="result not implament"} };
+                return new ResponseData() { error = new { message = "result not implament" } };
             }
             cBase.Response.StatusCode = result.Value.statusCode;
             return result.Value;
-            
+
         }
 
 

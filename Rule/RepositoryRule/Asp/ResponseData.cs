@@ -7,7 +7,7 @@ namespace RepositoryRule.Entity
     {
         public ResponseData()
         {
-
+            Responses = null;
         }
         public ResponseData(Responses responses) {
             Responses = responses;
@@ -15,7 +15,7 @@ namespace RepositoryRule.Entity
         public object result { get; set; }
         public object error { get; set; }
         public int statusCode { get; set; }
-        public Responses Responses { get; } 
+        public Responses? Responses { get; } 
     }
 
 }

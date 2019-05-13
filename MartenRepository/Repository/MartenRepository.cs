@@ -15,7 +15,7 @@ namespace MartenRepository.Repository
             where T : class, IEntity<TKey>
     {
         private IDocumentStore _store;
-        public MartenRepository(MartenContext context)
+        public MartenRepository(IMartenContext context)
         {
             _store = context.Store;
 

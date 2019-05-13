@@ -28,7 +28,7 @@ namespace MartenExample
 
         }
     }
-    public class Context : MartenRepository.Context.MartenContext
+    public class Context : MartenRepository.Context.IMartenContext
     {
      public   Context()
         {
@@ -63,7 +63,7 @@ namespace MartenExample
     }
     public class ProductService : MartenRepository.Repository.MartenRepository<Product, int>, IRepositoryBase<Product, int>
     {
-        public ProductService(MartenContext context) : base(context)
+        public ProductService(IMartenContext context) : base(context)
         {
         }
     }

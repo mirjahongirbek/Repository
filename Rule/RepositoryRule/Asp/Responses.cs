@@ -13,7 +13,9 @@ namespace RepositoryRule.Entity
         Conflict,
         BadRequest,
         UnAuthorized,
-        ModelIsNull
+        ModelIsNull,
+        NoAccess,
+        EntityExist
 
 
     }

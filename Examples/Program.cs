@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using RepositoryRule.Entity;
 
 namespace Examples
 {
@@ -7,6 +8,7 @@ namespace Examples
     {
         public static void Main(string[] args)
         {
+            
             CreateWebHostBuilder(args).Build().Run();
         }
 

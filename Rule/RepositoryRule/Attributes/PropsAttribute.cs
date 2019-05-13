@@ -92,7 +92,13 @@ namespace RepositoryRule.Attributes
         public object Value { get; set; }
 
     }
-    
+    public class MappingAttribute : System.Attribute
+    {
+        public MappingAttribute()
+        {
+
+        }
+    }
     
 
 }

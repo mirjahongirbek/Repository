@@ -16,5 +16,11 @@ namespace RepositoryRule.Enums
         All,
         Edit,
     }
+    public enum MappingEnum
+    {
+        Concat,
+        Multiplications,
+
+    }
 
 }
