@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace RepositoryRule.Entity
+﻿namespace RepositoryRule.Entity
 {
     public class ResponseData
     {
@@ -9,13 +6,15 @@ namespace RepositoryRule.Entity
         {
             Responses = null;
         }
-        public ResponseData(Responses responses) {
+
+        public ResponseData(Responses responses)
+        {
             Responses = responses;
         }
+
         public object result { get; set; }
         public object error { get; set; }
         public int statusCode { get; set; }
-        public Responses? Responses { get; } 
+        public Responses? Responses { get; }
     }
-
 }

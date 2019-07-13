@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Entity
 {
-    [Joha]
+    [Entity]
     public class Data : IEntity<string>
     {
         [Props(DefaultLabel:"Edit", font: FontType.EditDelete, showAdd:false, isShow:true)]

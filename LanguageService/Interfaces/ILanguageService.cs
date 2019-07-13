@@ -15,7 +15,10 @@ namespace LanguageService.Interfaces
          where T : class;
         Task<T> GetFirstBy<T>(int a, Expression<Func<T, bool>> expression)
            where T : class;
+        //Task<T> GetByField<T>(string fieldName, object value)
+        //    where T:class;
 
     }
+
 
 }

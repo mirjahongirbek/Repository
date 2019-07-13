@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace RepositoryRule.Entity
+﻿namespace RepositoryRule.Entity
 {
     public class Query
     {

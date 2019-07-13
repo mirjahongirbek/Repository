@@ -1,13 +1,7 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RepositoryRule.Enums
+﻿namespace RepositoryRule.Enums
 {
     public enum FontType
     {
-
         Number = 1,
         String = 2,
         DateTime = 3,
@@ -22,13 +16,12 @@ namespace RepositoryRule.Enums
         StringList = 50,
         IntList = 51,
 
-        
+
         EditButton = 75,
         Delete = 76,
         EditDelete = 80,
 
         Value = 100,
-        Label = 101,
+        Label = 101
     }
-
 }

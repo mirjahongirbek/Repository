@@ -3,6 +3,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using LangServer.Services.Interfaces;
 using LangServer.Services.Logic;
+using LanguageService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -38,7 +39,7 @@ namespace LangServer
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
             containerBuilder.RegisterType<Db.MongoDb>().As<IMongoContext>();
-            containerBuilder.RegisterType<LanguageService>().As<ILanguageService>();
+            containerBuilder.RegisterType<LanguageService<int>>().As<ILanguageService>();
             containerBuilder.RegisterType<EntityService>().As<IEntityService>();
           //  containerBuilder.RegisterType<ModelService>().As<IModelService>();
             containerBuilder.RegisterType<ProjectService>().As<IProjectService>().AutoActivate();

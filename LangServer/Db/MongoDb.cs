@@ -1,5 +1,6 @@
 ﻿
 using MongoDB.Driver;
+using MongoRepository;
 
 namespace LangServer.Db
 {

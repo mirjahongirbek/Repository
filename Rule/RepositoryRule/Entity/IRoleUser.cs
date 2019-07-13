@@ -1,7 +1,4 @@
-﻿using RepositoryRule.Attributes;
-using RepositoryRule.Enums;
-using System.Collections;
-using System.Collections.Generic;
+﻿using RepositoryRule.Enums;
 
 namespace RepositoryRule.Entity
 {
@@ -11,6 +8,5 @@ namespace RepositoryRule.Entity
         int Position { get; set; }
         string Description { get; set; }
         RoleEnum Roles { get; set; }
-
     }
 }

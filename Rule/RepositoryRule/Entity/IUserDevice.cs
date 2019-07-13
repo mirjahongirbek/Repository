@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RepositoryRule.Entity
 {
-    public interface IUserDevice<TKey>:IEntity<TKey>
+    public interface IUserDevice<TKey> : IEntity<TKey>
     {
         string DeviceId { get; set; }
         string DeviceName { get; set; }

@@ -73,7 +73,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validator", "Validator", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mapper", "Mapper", "{3EFB6D81-38D7-41CA-B3A5-03764B059A5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryMapper", "RepositoryMapper\RepositoryMapper.csproj", "{8CBDA3AB-BE12-46F5-8561-DBADDB9D2792}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryMapper", "RepositoryMapper\RepositoryMapper.csproj", "{8CBDA3AB-BE12-46F5-8561-DBADDB9D2792}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidRepository", "ValidRepository\ValidRepository.csproj", "{B60159BF-2325-4C3A-823F-329EB0B985B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -185,6 +187,10 @@ Global
 		{8CBDA3AB-BE12-46F5-8561-DBADDB9D2792}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CBDA3AB-BE12-46F5-8561-DBADDB9D2792}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CBDA3AB-BE12-46F5-8561-DBADDB9D2792}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B60159BF-2325-4C3A-823F-329EB0B985B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B60159BF-2325-4C3A-823F-329EB0B985B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B60159BF-2325-4C3A-823F-329EB0B985B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B60159BF-2325-4C3A-823F-329EB0B985B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -214,6 +220,7 @@ Global
 		{91111B49-5451-4DA1-837F-51E003D8F93E} = {F616BF70-3FA8-474F-BB01-7759D5E37465}
 		{E53F651F-C744-4AE6-80EA-36BF76D8CD17} = {BE5D45F4-6A1B-45C1-820C-0ECA338F14BF}
 		{8CBDA3AB-BE12-46F5-8561-DBADDB9D2792} = {3EFB6D81-38D7-41CA-B3A5-03764B059A5B}
+		{B60159BF-2325-4C3A-823F-329EB0B985B7} = {E3764948-C22A-4A30-A670-958BAE02769F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5856CBE3-69F0-47C1-B709-0FA9D1B8771B}

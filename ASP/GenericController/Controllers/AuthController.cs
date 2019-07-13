@@ -105,8 +105,7 @@ namespace GenericControllers.Controllers
                 if (string.IsNullOrEmpty(userAgent))
                 {
                     return null;
-                  //  this.GetResponse(err: new { Message = "User Agent not Exsist" });
-                }
+                 }
                 if (string.IsNullOrEmpty(modal.DeviceId))
                 {
                     return this.GetResponse();
@@ -115,6 +114,10 @@ namespace GenericControllers.Controllers
                 if (user == null)
                 {
                     return this.GetResponse();
+                }
+                if(user.DeviceList== null)
+                {
+                    user.DeviceList = new List<IUserDevice>() {await _device.GetFirst(m => m.DeviceId == modal.DeviceId && EqualityComparer<TKey>.Default.Equals(m.UserId, user.Id)) };
                 }
                 var userDevice = user.DeviceList?.FirstOrDefault(m => m.DeviceId == modal.DeviceId);
                 if (userDevice == null && _addDeviceIfNew)
@@ -127,11 +130,7 @@ namespace GenericControllers.Controllers
                 }
                 var getClaim = user.CreateClaim();
                 return null;
-                //var result = EntityRepository.State.State.GetAuth(getClaim, userDevice);
-                //userDevice.AccessToken = result.AccessToken;
-                //userDevice.RefreshToken = result.RefreshToken;
-                //await _device.Update(userDevice);
-                //return this.GetResponse(result);
+                
             }
             catch(Exception ext)
             {
@@ -162,6 +161,7 @@ namespace GenericControllers.Controllers
                 return this.ExceptionResult(ext, stop);
             }
         }
+        [HttpGet]
         public ResponseData Lagout()
         {
             _device.Logout(Request.Headers["Authorization"]);

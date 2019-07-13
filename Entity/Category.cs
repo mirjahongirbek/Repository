@@ -3,7 +3,7 @@ using RepositoryRule.Entity;
 
 namespace Entity
 {
-    [Joha(GetAll =true)]
+    [Entity(GetAll =true)]
     public class Category:IEntity<int>
     {
         public int Id { get; set; }

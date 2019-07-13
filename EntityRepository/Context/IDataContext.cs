@@ -16,19 +16,21 @@ namespace EntityRepository.Context
     }
     public class EntityFunction : IEntityFunction
     {
-        IDataContext _context;
+        DbContext _context;
         public EntityFunction(IDataContext db)
         {
-            _context = db;
+            
+            _context = db.DataContext;
         }
         public IEnumerable<T> CallProcedure<T>(string str, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             return null;
         }
 
-        public object CallProcedure(string str)
+        public  object CallProcedure(string str)
         {
-            throw new System.NotImplementedException();
+              var ss= _context.Database.ExecuteSqlCommand(str);
+            return null;
         }
 
         public T CalProcedure<T>(string functionName, params object[] items)

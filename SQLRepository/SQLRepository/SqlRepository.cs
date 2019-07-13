@@ -294,58 +294,72 @@ namespace SQLRepository
 
         #endregion
         #region Delate
-        public void Delate(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public T Delate(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             Stopwatch watch = new Stopwatch();
             try
             {
+                if(model== null)
+                {
+                    return null;
+                }
                 watch.Start();
                // _cache?.Remove( model.Id.ToString());
                  _dbSet.Remove(model);
                 watch.Stop();
                 Logging("Delete", watch.ElapsedMilliseconds, lineNumber, caller, model);
+                return model;
             }
             catch (Exception ext)
             {
                 watch.Stop();
                 ErrorLogging("AddAsync Error", watch.ElapsedMilliseconds, model, ext, caller, lineNumber);
+                return null;
             }
         }
-        public async Task DelateAsync(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public async Task<T> DelateAsync(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             Stopwatch watch = new Stopwatch();
             try
             {
+                if (model == null) return null;
                 watch.Start();
+                
                 _dbSet.Remove(model);
                // _cache?.Remove(model.Id.ToString());
                 await _db.SaveChangesAsync();
                 watch.Stop();
-
-                Logging("Delete Async", watch.ElapsedMilliseconds, lineNumber, caller, model);
+                 Logging("Delete Async", watch.ElapsedMilliseconds, lineNumber, caller, model);
+                return model;
             }
             catch (Exception ext)
             {
                 watch.Stop();
                 ErrorLogging("AddAsync Error", watch.ElapsedMilliseconds, model, ext, caller, lineNumber);
+                return null;
             }
            
         }
-        public async Task DeleteManyAsync(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public async Task<bool> DeleteManyAsync(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             Stopwatch watch = new Stopwatch();
             try
             {
                 watch.Start();
+                if(selector== null)
+                {
+                    return false;
+                }
                 await _dbSet.Where(selector).DeleteAsync();
                 watch.Stop();
                 Logging("DeleteManyAsync", watch.ElapsedMilliseconds, lineNumber, caller, selector);
-
+                return true;
             }
             catch (Exception ext)
             {
                 watch.Stop();
                 ErrorLogging("AddAsync Error", watch.ElapsedMilliseconds, selector, ext, caller, lineNumber);
+                return false;
             }
         }
 

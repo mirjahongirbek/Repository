@@ -1,18 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace RepositoryRule.Entity
+﻿namespace RepositoryRule.Entity
 {
-    public  class AuthOption
+    public class AuthOption
     {
         private static string issuer;
         private static string audinece;
         private static string key;
         private static int lifeTime;
-        public static string ISSUER { get { return issuer??"GenericISSUREER"; } set { issuer = value; } }
-        public static string AUDINECE { get { return audinece ?? "http://localhost:8080/"; } set { audinece = value; } }
-        public static string Key { get { return key ?? "mysupersecret_secretkey!123"; } set { key = value; }  }
-        public static int LifeTime { get { return lifeTime == 0 ? 200 : lifeTime; } set { lifeTime = value; } }
-        
+
+        public static string ISSUER
+        {
+            get => issuer ?? "GenericISSUREER";
+            set => issuer = value;
+        }
+
+        public static string AUDINECE
+        {
+            get => audinece ?? "http://localhost:8080/";
+            set => audinece = value;
+        }
+
+        public static string Key
+        {
+            get => key ?? "mysupersecret_secretkey!123";
+            set => key = value;
+        }
+
+        public static int LifeTime
+        {
+            get => lifeTime == 0 ? 200 : lifeTime;
+            set => lifeTime = value;
+        }
     }
 }

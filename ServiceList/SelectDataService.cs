@@ -59,9 +59,11 @@ namespace ServiceList
     {
 
     }
-    public class RoleService: RoleRepository<Entity.RoleUser>, IRoleService
+    public class RoleService : RoleRepository<Entity.RoleUser>, IRoleService
     {
-
+        public RoleService(IDataContext context) : base(context)
+        {
+        }
     }
     #endregion
     #region

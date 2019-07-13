@@ -237,7 +237,7 @@ namespace EntityRepository.Repository
         //}
         #endregion
             //Finish
-        public Task<IEnumerable<T>> GetByUserId(int id)
+        public virtual Task<IEnumerable<T>> GetByUserId(int id)
         {
             try
             {
@@ -246,7 +246,18 @@ namespace EntityRepository.Repository
             }
             catch (Exception ext)
             {
-                throw new Exception(ext.Message, ext);
+                throw;
+            }
+        }
+
+        public virtual async Task<T> GetFirst(Expression<Func<T, bool>> expression)
+        {
+            try
+            {
+              return  _db.FirstOrDefault(expression); 
+            }catch(Exception ext)
+            {
+                throw;
             }
         }
     }

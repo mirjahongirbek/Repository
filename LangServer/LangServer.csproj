@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LangEntity\LangEntity.csproj" />
+    <ProjectReference Include="..\MongoRepository\MongoRepository\MongoRepository.csproj" />
     <ProjectReference Include="..\ResponseLogic\ResponseLogic.csproj" />
   </ItemGroup>
 

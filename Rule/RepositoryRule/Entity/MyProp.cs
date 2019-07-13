@@ -1,25 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace RepositoryRule.Entity
+﻿namespace RepositoryRule.Entity
 {
     public class MyProp<T>
     {
-        private T _value;
-
-        public T Value
-        {
-            get
-            {
-                // insert desired logic here
-                return _value;
-            }
-            set
-            {
-                // insert desired logic here
-                _value = value;
-            }
-        }
+        public T Value { get; set; }
 
         public static implicit operator T(MyProp<T> value)
         {
@@ -28,7 +11,7 @@ namespace RepositoryRule.Entity
 
         public static implicit operator MyProp<T>(T value)
         {
-            return new MyProp<T> { Value = value };
+            return new MyProp<T> {Value = value};
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace RepositoryRule.Entity
+﻿namespace RepositoryRule.Entity
 {
     public enum Responses
     {
@@ -16,7 +13,5 @@ namespace RepositoryRule.Entity
         ModelIsNull,
         NoAccess,
         EntityExist
-
-
     }
 }

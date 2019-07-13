@@ -11,9 +11,7 @@ using LangEntity.Project;
 using RestSharp;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RepositoryRule.State;
 using System.Linq.Expressions;
-using MongoDB.Driver;
 
 namespace LanguageService
 {
@@ -23,6 +21,7 @@ namespace LanguageService
         RestClient _client;
         string _project;
         string modal;
+
         public LanguageService(IEnumerable<IEntity<TKey>> types, string project = null)
         {
             _project = project ?? "joha";
@@ -38,7 +37,7 @@ namespace LanguageService
         {
 
             var model = entity.GetType();
-            var joha = model.GetCustomAttribute<JohaAttribute>();
+            var joha = model.GetCustomAttribute<EntityAttribute>();
             TraficcModel request = new TraficcModel();
             request.Id = model.GUID; //.ToString();
             request.ProjectName = _project;
@@ -113,20 +112,19 @@ namespace LanguageService
             return ((JArray)desc.result).ToObject<List<T>>();
 
         }
-       private T Getobj<T>(RestRequest rest)
-            where T:class
+        private T Getobj<T>(RestRequest rest)
+             where T : class
         {
             var result = _client.Execute(rest);
             if (string.IsNullOrEmpty(result.Content))
             {
                 return null;
             }
-           var str= JsonConvert.DeserializeObject<ResponseData>(result.Content);
-          var entityData= ((JObject)str.result).ToObject<EntityData>();
-            
+            var str = JsonConvert.DeserializeObject<ResponseData>(result.Content);
+            var entityData = ((JObject)str.result).ToObject<EntityData>();
+
             return entityData.Data.ConvertDictionary<T>();
         }
-
         public async Task<T> GetById<T>(int langId, int id) where T : class
         {
             try
@@ -145,10 +143,10 @@ namespace LanguageService
             {
                 throw ext;
             }
-            return null;
+
         }
         public async Task<T> GetFirstBy<T>(int a, Expression<Func<T, bool>> expression)
-            where T:class
+            where T : class
         {
             try
             {
@@ -174,15 +172,14 @@ namespace LanguageService
                     return null;
                 }
                 rest.AddJsonBody(model);
-               return Getobj<T>(rest);
+                return Getobj<T>(rest);
             }
             catch (Exception ext)
             {
                 throw ext;
             }
-         
-        }
 
+        }
         public Task<T> Search<T>(int langId, Expression<Func<T, IComparable>> outExpr, object value) where T : class
         {
             try
@@ -211,6 +208,7 @@ namespace LanguageService
             return null;
         }
 
+      
     }
 
 }

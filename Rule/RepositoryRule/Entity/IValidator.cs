@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace RepositoryRule.Entity
+﻿namespace RepositoryRule.Entity
 {
     public interface IValidator
     {
@@ -12,6 +9,5 @@ namespace RepositoryRule.Entity
         string Fields { get; set; }
         string Description { get; set; }
         int? HttpSatusCode { get; set; }
-
     }
 }

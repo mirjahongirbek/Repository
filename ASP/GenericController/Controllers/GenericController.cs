@@ -14,6 +14,8 @@ using RepositoryRule.Entity;
 using SiteResponse;
 using System.Collections;
 using GenericController.Store;
+using GenericController.Modals;
+using ValidRepository;
 
 namespace GenericControllers.Controllers
 {
@@ -98,7 +100,7 @@ namespace GenericControllers.Controllers
             try
             {
                 var tip = GetType(id);
-                var attr = tip.GetCustomAttribute<JohaAttribute>();
+                var attr = tip.GetCustomAttribute<EntityAttribute>();
                 var service = GetService(id);
                 var serviceType = service.GetType();
                 if (attr == null)
@@ -128,6 +130,68 @@ namespace GenericControllers.Controllers
                 return this.ExceptionResult(ext, Stopwatch.StartNew());
             }
 
+        }
+        #endregion
+
+        #region File Region
+        public virtual async Task<ResponseData> AddFile([FromForm]FileViewModal<TKey> modal)
+        {
+            try
+            {
+               var tip= _types.FirstOrDefault(m => m.Key == modal.ServiceName.ToLower());
+                if(tip.Value== null)
+                {
+                    return this.GetResponse(Responses.ModelIsNull);
+                }
+               var service= _service.FirstOrDefault(m => m.Key == tip.Key).Value;
+               if (service== null) return this.GetResponse(Responses.ServiceNotFound);
+               var serviceTip= service.GetType();
+               var entity= serviceTip.InvokeMember("Get",bindings,null, service,new object[] { modal.Id, 148,"AddFile"});
+               var props= entity.GetType().GetProperties().FirstOrDefault(m => m.Name.ToLower() == modal.Field.ToLower());
+                var before= (string)props.GetValue(entity);
+                foreach (var i in modal.Files)
+                {
+                   var path= modal.Path + "\\" + RState.RandomString(6) + i.FileName;
+                    SiteResponse.State.Addwwroot(path, i);
+                    before += ";" + path;
+                }
+                props.SetValue(entity, before);
+                serviceTip.GetMethod("Update").Invoke(service, new object[] { entity, 158,"AddFile"});
+                return this.GetResponse(Responses.Success);
+            }catch(Exception ext)
+            {
+                return this.GetResponse(ext);
+            }
+        }
+        public virtual async Task<ResponseData> DeleteFileByOne([FromBody] FileViewModal<TKey> model)
+        {
+            try
+            {
+              var tip= _types.FirstOrDefault(m => m.Key == model.ServiceName.ToLower()).Value;
+                if (tip == null) return this.GetResponse(Responses.ServiceNotFound);
+              var service= _service.FirstOrDefault(m => m.Key == model.ServiceName.ToLower()).Value;
+                if (service == null) return this.GetResponse(Responses.ServiceNotFound);
+               var serviceTip= service.GetType();
+              var entity=  serviceTip.InvokeMember("Get", bindings, null, service, new object[] { model.Id,  174, "DeleteFile"});
+                if(entity== null)return this.GetResponse();
+              var props= entity.GetType().GetProperties().FirstOrDefault(m => m.Name.ToLower() == model.Field.ToLower());
+              var value= (string)props.GetValue(entity);
+                var newValue = "";
+                foreach(var i in value.Split(';'))
+                {
+                    if(i== model.Path)
+                    {
+                        continue;
+                    }
+                    newValue += ";" + i;
+                }
+                props.SetValue(entity,newValue);
+                serviceTip.GetMethod("Update").Invoke(service, new object[] { entity, 187, "DeleteFile" });
+                return this.GetResponse(Responses.Success);
+            }catch(Exception ext)
+            {
+                return this.GetResponse(ext);
+            }
         }
         #endregion
 
@@ -248,7 +312,8 @@ namespace GenericControllers.Controllers
                     return this.GetResponse(Responses.ServiceNotFound); //TODO change
                 }
                 var result = model.data.SerializeMe(type);
-                var service = GetService(model.name); //_service[model.name];
+                var service = GetService(model.name); 
+                //_service[model.name];
                 var errlist = result.CheckJwt(User);
                 if (errlist.Count > 0)
                 {
@@ -406,6 +471,9 @@ namespace GenericControllers.Controllers
     }
 
 }
+
+
+
 //string code = Guid.NewGuid().ToString();
 //_logger?.CatchError(code, stop.ElapsedMilliseconds, ext, ext, "DeleteData", code);
 //return this.GetResponse(status: 400, code: code);
