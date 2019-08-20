@@ -69,13 +69,13 @@ namespace EntityRepository
             _db.SaveChangesAsync();
             _rep?.AddRange(models);
         }
-        public virtual Task AddRangeAsync(List<T> models, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public virtual async Task AddRangeAsync(List<T> models, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             _cache?.AddRange(models);
-            _dbSet.AddRangeAsync(models);
-            _db.SaveChangesAsync();
+           await _dbSet.AddRangeAsync(models);
+            await _db.SaveChangesAsync();
             _rep?.AddRangeAsync(models);
-            return Task.CompletedTask;
+            
         }
         #endregion
 
@@ -110,10 +110,10 @@ namespace EntityRepository
             result = _dbSet.FirstOrDefault(selector);
             return result;
         }
-        public virtual Task<T> GetFirstAsync(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public virtual async Task<T> GetFirstAsync(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            var result = _cache?.FindFirstAsync(selector);
-            result = _dbSet.FirstOrDefaultAsync(selector);
+            var result = await _cache?.FindFirstAsync(selector) ?? await _dbSet.FirstOrDefaultAsync(selector);
+                                  
             return result;
         }
         #endregion
@@ -167,41 +167,82 @@ namespace EntityRepository
         #endregion
 
         #region Delate
-        public virtual void Delate(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public virtual T Delate(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            _cache?.Delete(model.Id.ToString());
-            _dbSet.Remove(model);
-            _db.SaveChanges();
-            _rep?.Delate(model);
+            try
+            {
+                if (model == null) return null;
+                _cache?.Delete(model.Id.ToString());
+                _dbSet.Remove(model);
+                _db.SaveChanges();
+                _rep?.Delate(model);
+                return model;
+            }
+            catch(Exception ext)
+            {
+                throw;
+            }
+
+                 
+            
 
         }
-        public virtual async Task DelateAsync(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public virtual async Task<T> DelateAsync(T model, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            _dbSet.Remove(model);
-            _cache?.Delete(model.Id.ToString());
-            await _db.SaveChangesAsync();
-             _rep?.DelateAsync(model);
+            try {
+                if (model == null) return null;
+                _dbSet.Remove(model);
+                _cache?.Delete(model.Id.ToString());
+                await _db.SaveChangesAsync();
+                _rep?.DelateAsync(model);
+                return model;
+                
+            }
+            catch(Exception ext)
+            {
+                //TODO Add Logger
+                throw;
+            }
+            
         }
-        public virtual async Task DeleteManyAsync(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public virtual async Task<bool> DeleteManyAsync(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            _cache?.DeleteMany(selector);
-            await _dbSet.Where(selector).DeleteAsync();
-            _db.SaveChanges();
-             _rep?.DeleteManyAsync(selector);
+            try
+            {
+                _cache?.DeleteMany(selector);
+                await _dbSet.Where(selector).DeleteAsync();
+                _db.SaveChanges();
+                _rep?.DeleteManyAsync(selector);
+                return true;
+            }
+            catch(Exception ext)
+            {
+                return false;
+            }
+            
         }
-        public virtual void DeleteMany(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public virtual bool DeleteMany(Expression<Func<T, bool>> selector, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            _cache?.DeleteMany(selector);
-            _dbSet.Where(selector).Delete();
-            _db.SaveChanges();
-            _rep?.DeleteMany(selector);
+            try
+            {
+                _cache?.DeleteMany(selector);
+                _dbSet.Where(selector).Delete();
+                _db.SaveChanges();
+                _rep?.DeleteMany(selector);
+            }
+            catch(Exception ext)
+            {
+                return false;
+            }
+            
+            return true;
+
         }
         public virtual T Delete(int id)
         {
             var result = Get(id);
-            Delate(result);
-            _rep?.Delete(id);
-            return result;
+           return Delate(result);
+            
         }
 
         #endregion
@@ -227,7 +268,6 @@ namespace EntityRepository
         {
             var result = _dbSet.Where(selector);
             return result;
-
         }
 
         public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> selector, int offset, int limit, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)

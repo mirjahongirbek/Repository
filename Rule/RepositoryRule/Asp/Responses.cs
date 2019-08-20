@@ -12,6 +12,8 @@
         UnAuthorized,
         ModelIsNull,
         NoAccess,
-        EntityExist
+        EntityExist,
+        TimeElepsed,
+        SomethingWrong
     }
 }

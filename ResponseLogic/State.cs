@@ -60,7 +60,7 @@ namespace SiteResponse
             result.error = new {message};
             return result;
         }
-
+       
         public static ResponseData GetResponse(this ControllerBase cBase, object result, Responses responses)
         {
             if (responses == Responses.Ok || responses == Responses.Success) return new ResponseData {result = result};

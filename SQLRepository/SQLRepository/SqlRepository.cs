@@ -715,12 +715,26 @@ namespace SQLRepository
 
         public T Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (id == 0)
+                {
+                    return null;
+                }
+               var model= Get(id);
+                if (model == null) return null;
+                return  Delate(model);
+                
+            }catch(Exception ext)
+            {
+
+                throw;
+            }
         }
 
         public IEnumerable<T> FindAll()
         {
-            throw new NotImplementedException();
+           
         }
 
         public Task<IEnumerable<T>> CallProcedure(string str)
@@ -759,6 +773,11 @@ namespace SQLRepository
         }
 
         public Type GetGenericType()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IRepositoryBase<T, int>.DeleteMany(Expression<Func<T, bool>> expression, int lineNumber, string caller)
         {
             throw new NotImplementedException();
         }
