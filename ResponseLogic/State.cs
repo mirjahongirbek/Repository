@@ -24,12 +24,13 @@ namespace SiteResponse
         {
             try
             {
-                var result = (string) control.Request.Headers.FirstOrDefault(m => m.Key == "Accept-Language").Value;
+                var result = (string)control.Request.Headers.FirstOrDefault(m => m.Key == "Accept-Language").Value;
                 if (string.IsNullOrEmpty(result)) return defaultValue;
                 return Convert.ToInt32(result);
             }
             catch (Exception ext)
             {
+
             }
 
             return 0;
@@ -41,7 +42,7 @@ namespace SiteResponse
             if (cBase.GetLang() == 0)
             {
                 cBase.Response.StatusCode = 400;
-                return new ResponseData {error = valid};
+                return new ResponseData { error = valid };
             }
 
             return Valid(valid);
@@ -57,14 +58,14 @@ namespace SiteResponse
                 message += "\r\n" + state.Key + "не соответствует";
             }
 
-            result.error = new {message};
+            result.error = new { message };
             return result;
         }
-       
+
         public static ResponseData GetResponse(this ControllerBase cBase, object result, Responses responses)
         {
-            if (responses == Responses.Ok || responses == Responses.Success) return new ResponseData {result = result};
-            return new ResponseData {error = result};
+            if (responses == Responses.Ok || responses == Responses.Success) return new ResponseData { result = result };
+            return new ResponseData { error = result };
         }
 
         public static ResponseData GetResponse(this ControllerBase cBase,
@@ -94,7 +95,7 @@ namespace SiteResponse
             if (result is Exception exception)
             {
                 cBase.Response.StatusCode = 400;
-                return new ResponseData {error = new {message = exception.Message}};
+                return new ResponseData { error = new { message = exception.Message } };
             }
 
             if (result is ResponseData response)
@@ -105,7 +106,7 @@ namespace SiteResponse
             }
 
             if (result is Responses responses) return GetResponse(cBase, responses);
-            return new ResponseData {result = result};
+            return new ResponseData { result = result };
         }
 
         public static ResponseData GetResponse(this ControllerBase cBase, object result, object err)
@@ -134,7 +135,7 @@ namespace SiteResponse
             if (result.Value == null)
             {
                 cBase.Response.StatusCode = 400;
-                return new ResponseData {error = new {message = "result not implament"}};
+                return new ResponseData { error = new { message = "result not implament" } };
             }
 
             cBase.Response.StatusCode = result.Value.statusCode;
